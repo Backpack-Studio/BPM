@@ -135,21 +135,21 @@ struct Mat4
 
     /**
      * @brief Creates a rotation matrix around the X, Y, and Z axes in the order specified
-     * @param angleX Rotation angle around the X-axis in radians
-     * @param angleY Rotation angle around the Y-axis in radians
-     * @param angleZ Rotation angle around the Z-axis in radians
+     * @param angle_x Rotation angle around the X-axis in radians
+     * @param angle_y Rotation angle around the Y-axis in radians
+     * @param angle_z Rotation angle around the Z-axis in radians
      * @return Rotation matrix
      */
-    static Mat4 rotate_xyz(float angleX, float angleY, float angleZ);
+    static Mat4 rotate_xyz(float angle_x, float angle_y, float angle_z);
 
     /**
      * @brief Creates a rotation matrix around the Z, Y, and X axes in the order specified
-     * @param angleZ Rotation angle around the Z-axis in radians
-     * @param angleY Rotation angle around the Y-axis in radians
-     * @param angleX Rotation angle around the X-axis in radians
+     * @param angle_z Rotation angle around the Z-axis in radians
+     * @param angle_y Rotation angle around the Y-axis in radians
+     * @param angle_x Rotation angle around the X-axis in radians
      * @return Rotation matrix
      */
-    static Mat4 rotate_zyx(float angleZ, float angleY, float angleX);
+    static Mat4 rotate_zyx(float angle_z, float angle_y, float angle_x);
 
     /**
      * @brief Creates a scaling matrix
@@ -173,11 +173,11 @@ struct Mat4
      * @tparam T Type of vector components
      * @param translate Translation vector
      * @param scale Scaling vector
-     * @param rotationAxis Axis of rotation
-     * @param rotationAngle Angle of rotation in radians
+     * @param axis Axis of rotation
+     * @param angle Angle of rotation in radians
      * @return Transformation matrix
      */
-    static Mat4 transform(const Vec3& translate, const Vec3& scale, const Vec3 rotationAxis, float rotationAngle);
+    static Mat4 transform(const Vec3& translate, const Vec3& scale, const Vec3 axis, float angle);
 
     /**
      * @brief Creates a transformation matrix from translation, scale, and quaternion rotation
@@ -370,9 +370,8 @@ constexpr Mat4::Mat4(float m0, float m4, float m8,  float m12,
 
 /* Static Methods */
 
-constexpr Mat4 Mat4::identity()
-{
-    return {
+constexpr Mat4 Mat4::identity() {
+    return Mat4 {
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
@@ -380,9 +379,8 @@ constexpr Mat4 Mat4::identity()
     };
 }
 
-constexpr Mat4 Mat4::translate(float x, float y, float z)
-{
-    return {
+constexpr Mat4 Mat4::translate(float x, float y, float z) {
+    return Mat4 {
         1.0f, 0.0f, 0.0f, x,
         0.0f, 1.0f, 0.0f, y,
         0.0f, 0.0f, 1.0f, z,
@@ -390,25 +388,20 @@ constexpr Mat4 Mat4::translate(float x, float y, float z)
     };
 }
 
-constexpr Mat4 Mat4::translate(const Vec3& v)
-{
+constexpr Mat4 Mat4::translate(const Vec3& v) {
     return translate(v.x, v.y, v.z);
 }
 
-inline Mat4 Mat4::rotate(float x, float y, float z, float angle)
-{
+inline Mat4 Mat4::rotate(float x, float y, float z, float angle) {
     float lenSq = x * x + y * y + z * z;
-
     if (lenSq != 1.0f && lenSq != 0.0f) {
         float len = 1.0f / std::sqrt(lenSq);
         x *= len, y *= len, z *= len;
     }
-
     float s = std::sin(angle);
     float c = std::cos(angle);
     float t = 1.0f - c;
-
-    return {
+    return Mat4 {
         x * x * t + c, x * y * t - z * s, x * z * t + y * s, 0.0f,
         y * x * t + z * s, y * y * t + c, y * z * t - x * s, 0.0f,
         z * x * t - y * s, z * y * t + x * s, z * z * t + c, 0.0f,
@@ -416,16 +409,14 @@ inline Mat4 Mat4::rotate(float x, float y, float z, float angle)
     };
 }
 
-inline Mat4 Mat4::rotate(const Vec3& axis, float angle)
-{
+inline Mat4 Mat4::rotate(const Vec3& axis, float angle) {
     return rotate(axis.x, axis.y, axis.z, angle);
 }
 
-inline Mat4 Mat4::rotate_x(float angle)
-{
+inline Mat4 Mat4::rotate_x(float angle) {
     float c = std::cos(angle);
     float s = std::sin(angle);
-    return {
+    return Mat4 {
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, c,    -s,   0.0f,
         0.0f, s,     c,   0.0f,
@@ -433,11 +424,10 @@ inline Mat4 Mat4::rotate_x(float angle)
     };
 }
 
-inline Mat4 Mat4::rotate_y(float angle)
-{
+inline Mat4 Mat4::rotate_y(float angle) {
     float c = std::cos(angle);
     float s = std::sin(angle);
-    return {
+    return Mat4 {
         c,    0.0f, s,    0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         -s,   0.0f, c,   0.0f,
@@ -445,11 +435,10 @@ inline Mat4 Mat4::rotate_y(float angle)
     };
 }
 
-inline Mat4 Mat4::rotate_z(float angle)
-{
+inline Mat4 Mat4::rotate_z(float angle) {
     float c = std::cos(angle);
     float s = std::sin(angle);
-    return {
+    return Mat4 {
         c,    -s,   0.0f, 0.0f,
         s,     c,   0.0f, 0.0f,
         0.0f,  0.0f, 1.0f, 0.0f,
@@ -457,15 +446,14 @@ inline Mat4 Mat4::rotate_z(float angle)
     };
 }
 
-inline Mat4 Mat4::rotate_xyz(float angleX, float angleY, float angleZ)
-{
-    float cx = std::cos(angleX);
-    float sx = std::sin(angleX);
-    float cy = std::cos(angleY);
-    float sy = std::sin(angleY);
-    float cz = std::cos(angleZ);
-    float sz = std::sin(angleZ);
-    return {
+inline Mat4 Mat4::rotate_xyz(float angle_x, float angle_y, float angle_z) {
+    float cx = std::cos(angle_x);
+    float sx = std::sin(angle_x);
+    float cy = std::cos(angle_y);
+    float sy = std::sin(angle_y);
+    float cz = std::cos(angle_z);
+    float sz = std::sin(angle_z);
+    return Mat4 {
         cy * cz, -cy * sz, sy, 0.0f,
         sx * sy * cz + cx * sz, -sx * sy * sz + cx * cz, -sx * cy, 0.0f,
         -cx * sy * cz + sx * sz, cx * sy * sz + sx * cz, cx * cy, 0.0f,
@@ -473,15 +461,14 @@ inline Mat4 Mat4::rotate_xyz(float angleX, float angleY, float angleZ)
     };
 }
 
-inline Mat4 Mat4::rotate_zyx(float angleZ, float angleY, float angleX)
-{
-    float cx = std::cos(angleX);
-    float sx = std::sin(angleX);
-    float cy = std::cos(angleY);
-    float sy = std::sin(angleY);
-    float cz = std::cos(angleZ);
-    float sz = std::sin(angleZ);
-    return {
+inline Mat4 Mat4::rotate_zyx(float angle_z, float angle_y, float angle_x) {
+    float cx = std::cos(angle_x);
+    float sx = std::sin(angle_x);
+    float cy = std::cos(angle_y);
+    float sy = std::sin(angle_y);
+    float cz = std::cos(angle_z);
+    float sz = std::sin(angle_z);
+    return Mat4 {
         cy * cz, -sz, cz * sy, 0.0f,
         cx * sz + sx * sy * cz, cx * cz - sx * sy * sz, -sx * cy, 0.0f,
         sx * sz - cx * sy * cz, cx * sy * sz + sx * cz, cx * cy, 0.0f,
@@ -489,8 +476,7 @@ inline Mat4 Mat4::rotate_zyx(float angleZ, float angleY, float angleX)
     };
 }
 
-constexpr Mat4 Mat4::scale(float sx, float sy, float sz)
-{
+constexpr Mat4 Mat4::scale(float sx, float sy, float sz) {
     return {
         sx, 0.0f, 0.0f, 0.0f,
         0.0f, sy, 0.0f, 0.0f,
@@ -499,27 +485,23 @@ constexpr Mat4 Mat4::scale(float sx, float sy, float sz)
     };
 }
 
-constexpr Mat4 Mat4::scale(const Vec3& v)
-{
+constexpr Mat4 Mat4::scale(const Vec3& v) {
     return Mat4::scale(v.x, v.y, v.z);
 }
 
-inline Mat4 Mat4::transform(const Vec3& translate, const Vec3& scale, const Vec3 rotationAxis, float rotationAngle)
-{
-    return Mat4::scale(scale) * Mat4::rotate(rotationAxis, rotationAngle) * Mat4::translate(translate);
+inline Mat4 Mat4::transform(const Vec3& translate, const Vec3& scale, const Vec3 axis, float angle) {
+    return Mat4::scale(scale) * Mat4::rotate(axis, angle) * Mat4::translate(translate);
 }
 
-inline Mat4 Mat4::transform(const Vec3& translate, const Vec3& scale, const Quat& quaternion)
-{
+inline Mat4 Mat4::transform(const Vec3& translate, const Vec3& scale, const Quat& quaternion) {
     return Mat4::scale(scale) * Mat4::from_quat(quaternion) * Mat4::translate(translate);
 }
 
-constexpr Mat4 Mat4::frustum(float left, float right, float bottom, float top, float near, float far)
-{
+constexpr Mat4 Mat4::frustum(float left, float right, float bottom, float top, float near, float far) {
     float rl = right - left;
     float tb = top - bottom;
     float fn = far - near;
-    return {
+    return Mat4 {
         2.0f * near / rl, 0.0f, (right + left) / rl, 0.0f,
         0.0f, 2.0f * near / tb, (top + bottom) / tb, 0.0f,
         0.0f, 0.0f, -(far + near) / fn, -2.0f * far * near / fn,
@@ -527,10 +509,9 @@ constexpr Mat4 Mat4::frustum(float left, float right, float bottom, float top, f
     };
 }
 
-inline Mat4 Mat4::perspective(float fovy, float aspect, float near, float far)
-{
+inline Mat4 Mat4::perspective(float fovy, float aspect, float near, float far) {
     float tanHalfFovy = std::tan(fovy / 2.0f);
-    return {
+    return Mat4 {
         1.0f / (aspect * tanHalfFovy), 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f / tanHalfFovy, 0.0f, 0.0f,
         0.0f, 0.0f, -(far + near) / (far - near), -2.0f * far * near / (far - near),
@@ -538,12 +519,11 @@ inline Mat4 Mat4::perspective(float fovy, float aspect, float near, float far)
     };
 }
 
-constexpr Mat4 Mat4::ortho(float left, float right, float bottom, float top, float near, float far)
-{
+constexpr Mat4 Mat4::ortho(float left, float right, float bottom, float top, float near, float far) {
     float rl = right - left;
     float tb = top - bottom;
     float fn = far - near;
-    return {
+    return Mat4 {
         2.0f / rl, 0.0f, 0.0f, -(right + left) / rl,
         0.0f, 2.0f / tb, 0.0f, -(top + bottom) / tb,
         0.0f, 0.0f, -2.0f / fn, -(far + near) / fn,
@@ -551,8 +531,7 @@ constexpr Mat4 Mat4::ortho(float left, float right, float bottom, float top, flo
     };
 }
 
-inline Mat4 Mat4::look_at(const Vec3& eye, const Vec3& target, const Vec3& up)
-{
+inline Mat4 Mat4::look_at(const Vec3& eye, const Vec3& target, const Vec3& up) {
     Vector3 zaxis = (eye - target).normalized();
     Vector3 xaxis = up.cross(zaxis).normalized();
     Vector3 yaxis = zaxis.cross(xaxis);
@@ -582,8 +561,7 @@ inline Mat4 Mat4::look_at(const Vec3& eye, const Vec3& target, const Vec3& up)
     return mat_view;
 }
 
-constexpr Mat4 Mat4::from_quat(const Quat& q)
-{
+constexpr Mat4 Mat4::from_quat(const Quat& q) {
     Mat4 result;
 
     float xx = q.x * q.x;
@@ -621,8 +599,7 @@ constexpr Mat4 Mat4::from_quat(const Quat& q)
 
 /* Operators */
 
-constexpr Mat4 Mat4::operator+(const Mat4& other) const
-{
+constexpr Mat4 Mat4::operator+(const Mat4& other) const {
     Mat4 result;
     for (int i = 0; i < 16; ++i) {
         result.m[i] = m[i] + other.m[i];
@@ -630,8 +607,7 @@ constexpr Mat4 Mat4::operator+(const Mat4& other) const
     return result;
 }
 
-constexpr Mat4 Mat4::operator-(const Mat4& other) const
-{
+constexpr Mat4 Mat4::operator-(const Mat4& other) const {
     Mat4 result;
     for (int i = 0; i < 16; ++i) {
         result.m[i] = m[i] - other.m[i];
@@ -639,8 +615,7 @@ constexpr Mat4 Mat4::operator-(const Mat4& other) const
     return result;
 }
 
-constexpr Mat4 Mat4::operator*(const Mat4& other) const
-{
+constexpr Mat4 Mat4::operator*(const Mat4& other) const {
     Mat4 result;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
@@ -654,8 +629,7 @@ constexpr Mat4 Mat4::operator*(const Mat4& other) const
     return result;
 }
 
-constexpr Mat4 Mat4::operator*(float scalar) const
-{
+constexpr Mat4 Mat4::operator*(float scalar) const {
     Mat4 result;
     for (int i = 0; i < 16; i++) {
         result.m[i] = m[i] * scalar;
@@ -663,8 +637,7 @@ constexpr Mat4 Mat4::operator*(float scalar) const
     return result;
 }
 
-constexpr bool Mat4::operator==(const Mat4& other) const
-{
+constexpr bool Mat4::operator==(const Mat4& other) const {
     for (int i = 0; i < 16; i++) {
         if (m[i] != other.m[i]) {
             return false;
@@ -675,13 +648,11 @@ constexpr bool Mat4::operator==(const Mat4& other) const
 
 /* Mat4 Methods */
 
-constexpr Vec3 Mat4::get_translation() const
-{
+constexpr Vec3 Mat4::get_translation() const {
     return { m[12], m[13], m[14] };
 }
 
-inline Quat Mat4::get_rotation() const
-{
+inline Quat Mat4::get_rotation() const {
     // Extract the elements from the matrix
     float trace = m[0] + m[5] + m[10]; // Trace of the matrix
 
@@ -721,19 +692,16 @@ inline Quat Mat4::get_rotation() const
     return q.normalize();
 }
 
-constexpr float Mat4::determinant() const
-{
+constexpr float Mat4::determinant() const {
     return m[0] * (m[5] * m[10] - m[6] * m[9]) - m[1] * (m[4] * m[10] - m[6] * m[8]) + m[2] * (m[4] * m[9] - m[5] * m[8]);
 }
 
-constexpr float Mat4::trace() const
-{
+constexpr float Mat4::trace() const {
     return m[0] + m[5] + m[10] + m[15];
 }
 
-constexpr Mat4 Mat4::transpose() const
-{
-    return {
+constexpr Mat4 Mat4::transpose() const {
+    return Mat4 {
         m[0], m[1], m[2], m[3],
         m[4], m[5], m[6], m[7],
         m[8], m[9], m[10], m[11],
@@ -741,8 +709,7 @@ constexpr Mat4 Mat4::transpose() const
     };
 }
 
-constexpr Mat4 Mat4::invert() const
-{
+constexpr Mat4 Mat4::invert() const {
     float a00 = m[0], a01 = m[1], a02 = m[2], a03 = m[3];
     float a10 = m[4], a11 = m[5], a12 = m[6], a13 = m[7];
     float a20 = m[8], a21 = m[9], a22 = m[10], a23 = m[11];
@@ -763,7 +730,7 @@ constexpr Mat4 Mat4::invert() const
 
     float invDet = 1.0f / (b00*b11 - b01*b10 + b02*b09 + b03*b08 - b04*b07 + b05*b06);
 
-    return {
+    return Mat4 {
         (a11 * b11 - a12 * b10 + a13 * b09) * invDet,
         (-a10 * b11 + a12 * b08 - a13 * b07) * invDet,
         (a10 * b10 - a11 * b08 + a13 * b06) * invDet,
@@ -786,8 +753,7 @@ constexpr Mat4 Mat4::invert() const
 /* Vec3 Transformation Methods */
 
 template <typename T>
-void Vector3<T>::transform(const Mat4& matrix)
-{
+void Vector3<T>::transform(const Mat4& matrix) {
     *this = {
         x * matrix.m[0] + y * matrix.m[4] + z * matrix.m[8] + matrix.m[12],
         x * matrix.m[1] + y * matrix.m[5] + z * matrix.m[9] + matrix.m[13],
@@ -796,8 +762,7 @@ void Vector3<T>::transform(const Mat4& matrix)
 }
 
 template <typename T>
-Vector3<T> Vector3<T>::transformed(const Mat4& matrix) const
-{
+Vector3<T> Vector3<T>::transformed(const Mat4& matrix) const {
     return {
         x * matrix.m[0] + y * matrix.m[4] + z * matrix.m[8] + matrix.m[12],
         x * matrix.m[1] + y * matrix.m[5] + z * matrix.m[9] + matrix.m[13],
@@ -808,8 +773,7 @@ Vector3<T> Vector3<T>::transformed(const Mat4& matrix) const
 /* Vec4 Transformation Methods */
 
 template <typename T>
-void Vector4<T>::transform(const Mat4& matrix)
-{
+void Vector4<T>::transform(const Mat4& matrix) {
     *this = {
         x * matrix.m[0] + y * matrix.m[4] + z * matrix.m[8] + w * matrix.m[12],
         x * matrix.m[1] + y * matrix.m[5] + z * matrix.m[9] + w * matrix.m[13],
@@ -819,8 +783,7 @@ void Vector4<T>::transform(const Mat4& matrix)
 }
 
 template <typename T>
-Vector4<T> Vector4<T>::transformed(const Mat4& matrix) const
-{
+Vector4<T> Vector4<T>::transformed(const Mat4& matrix) const {
     return {
         x * matrix.m[0] + y * matrix.m[4] + z * matrix.m[8] + w * matrix.m[12],
         x * matrix.m[1] + y * matrix.m[5] + z * matrix.m[9] + w * matrix.m[13],

@@ -110,8 +110,7 @@ struct Vector3
      * @return A Vector3 containing the components of the current vector casted to the type U.
      */
     template <typename U>
-    constexpr operator Vector3<U>() const
-    {
+    constexpr operator Vector3<U>() const {
         return Vector3<U>(
             static_cast<U>(x),
             static_cast<U>(y),
@@ -124,8 +123,7 @@ struct Vector3
      * @param axis The index of the component to access (0 for x, 1 for y, 2 for z).
      * @return A reference to the component at the specified index.
      */
-    constexpr T& operator[](int axis)
-    {
+    constexpr T& operator[](int axis) {
         switch (axis) {
             case 0:  return x;
             case 1:  return y;
@@ -139,8 +137,7 @@ struct Vector3
      * @param axis The index of the component to access (0 for x, 1 for y, 2 for z).
      * @return A const reference to the component at the specified index.
      */
-    constexpr const T& operator[](int axis) const
-    {
+    constexpr const T& operator[](int axis) const {
         switch (axis) {
             case 0:  return x;
             case 1:  return y;
@@ -153,8 +150,7 @@ struct Vector3
      *
      * @return A new vector with each component negated.
      */
-    constexpr Vector3 operator-() const
-    {
+    constexpr Vector3 operator-() const {
         return Vector3(-x, -y, -z);
     }
 
@@ -164,8 +160,7 @@ struct Vector3
      * @param scalar The scalar value to subtract from each component of the vector.
      * @return A new vector resulting from the subtraction operation.
      */
-    constexpr Vector3 operator-(T scalar) const
-    {
+    constexpr Vector3 operator-(T scalar) const {
         return Vector3(x - scalar, y - scalar, z - scalar);
     }
 
@@ -175,8 +170,7 @@ struct Vector3
      * @param scalar The scalar value to add to each component of the vector.
      * @return A new vector resulting from the addition operation.
      */
-    constexpr Vector3 operator+(T scalar) const
-    {
+    constexpr Vector3 operator+(T scalar) const {
         return Vector3(x + scalar, y + scalar, z + scalar);
     }
 
@@ -186,8 +180,7 @@ struct Vector3
      * @param scalar The scalar value to multiply each component of the vector by.
      * @return A new vector resulting from the multiplication operation.
      */
-    constexpr Vector3 operator*(T scalar) const
-    {
+    constexpr Vector3 operator*(T scalar) const {
         return Vector3(x * scalar, y * scalar, z * scalar);
     }
 
@@ -202,8 +195,7 @@ struct Vector3
      * @param scalar The scalar value to divide each component of the vector by.
      * @return A new vector resulting from the division operation.
      */
-    constexpr Vector3 operator/(T scalar) const
-    {
+    constexpr Vector3 operator/(T scalar) const {
         if constexpr (std::is_floating_point<T>::value) {
             const T inv = static_cast<T>(1.0) / scalar;
             return Vector3(x * inv, y * inv, z * inv);
@@ -217,8 +209,7 @@ struct Vector3
      * @param other The vector to subtract from the current vector.
      * @return A new vector resulting from the subtraction operation.
      */
-    constexpr Vector3 operator-(const Vector3& other) const
-    {
+    constexpr Vector3 operator-(const Vector3& other) const {
         return Vector3(x - other.x, y - other.y, z - other.z);
     }
 
@@ -228,8 +219,7 @@ struct Vector3
      * @param other The vector to add to the current vector.
      * @return A new vector resulting from the addition operation.
      */
-    constexpr Vector3 operator+(const Vector3& other) const
-    {
+    constexpr Vector3 operator+(const Vector3& other) const {
         return Vector3(x + other.x, y + other.y, z + other.z);
     }
 
@@ -239,8 +229,7 @@ struct Vector3
      * @param other The vector to multiply element-wise.
      * @return A new vector resulting from the element-wise multiplication.
      */
-    constexpr Vector3 operator*(const Vector3& other) const
-    {
+    constexpr Vector3 operator*(const Vector3& other) const {
         return Vector3(x * other.x, y * other.y, z * other.z);
     }
 
@@ -255,8 +244,7 @@ struct Vector3
      * @param other The vector to divide element-wise.
      * @return A new vector resulting from the element-wise division.
      */
-    constexpr Vector3 operator/(const Vector3& other) const
-    {
+    constexpr Vector3 operator/(const Vector3& other) const {
         return Vector3(x / other.x, y / other.y, z / other.z);
     }
 
@@ -266,8 +254,7 @@ struct Vector3
      * @param other The vector to compare with.
      * @return True if the vectors are equal (all components are equal), false otherwise.
      */
-    constexpr bool operator==(const Vector3& other) const
-    {
+    constexpr bool operator==(const Vector3& other) const {
         return (x == other.x) && (y == other.y) && (z == other.z);
     }
 
@@ -277,8 +264,7 @@ struct Vector3
      * @param other The vector to compare with.
      * @return True if the vectors are not equal (at least one component is different), false otherwise.
      */
-    constexpr bool operator!=(const Vector3& other) const
-    {
+    constexpr bool operator!=(const Vector3& other) const {
         return (x != other.x) || (y != other.y) || (z != other.z);
     }
 
@@ -288,8 +274,7 @@ struct Vector3
      * @param scalar The scalar value to subtract from each component of the vector.
      * @return A reference to the modified vector.
      */
-    Vector3& operator-=(T scalar)
-    {
+    Vector3& operator-=(T scalar) {
         x -= scalar;
         y -= scalar;
         z -= scalar;
@@ -302,8 +287,7 @@ struct Vector3
      * @param scalar The scalar value to add to each component of the vector.
      * @return A reference to the modified vector.
      */
-    Vector3& operator+=(T scalar)
-    {
+    Vector3& operator+=(T scalar) {
         x += scalar;
         y += scalar;
         z += scalar;
@@ -316,8 +300,7 @@ struct Vector3
      * @param scalar The scalar value to multiply each component of the vector by.
      * @return A reference to the modified vector.
      */
-    Vector3& operator*=(T scalar)
-    {
+    Vector3& operator*=(T scalar) {
         x *= scalar;
         y *= scalar;
         z *= scalar;
@@ -335,8 +318,7 @@ struct Vector3
      * @param scalar The scalar value to divide each component of the vector by.
      * @return A reference to the modified vector.
      */
-    Vector3& operator/=(T scalar)
-    {
+    Vector3& operator/=(T scalar) {
         if constexpr (std::is_floating_point<T>::value) {
             const T inv = static_cast<T>(1.0) / scalar;
             x *= inv, y *= inv, z *= inv;
@@ -354,8 +336,7 @@ struct Vector3
      * @param other The vector to subtract.
      * @return Reference to the modified vector after subtraction.
      */
-    Vector3& operator-=(const Vector3& other)
-    {
+    Vector3& operator-=(const Vector3& other) {
         x -= other.x;
         y -= other.y;
         z -= other.z;
@@ -368,8 +349,7 @@ struct Vector3
      * @param other The vector to add.
      * @return Reference to the modified vector after addition.
      */
-    Vector3& operator+=(const Vector3& other)
-    {
+    Vector3& operator+=(const Vector3& other) {
         x += other.x;
         y += other.y;
         z += other.z;
@@ -382,8 +362,7 @@ struct Vector3
      * @param other The vector to multiply.
      * @return Reference to the modified vector after multiplication.
      */
-    Vector3& operator*=(const Vector3& other)
-    {
+    Vector3& operator*=(const Vector3& other) {
         x *= other.x;
         y *= other.y;
         z *= other.z;
@@ -402,8 +381,7 @@ struct Vector3
      * @param other The vector to divide.
      * @return A reference to the modified vector after division.
      */
-    Vector3& operator/=(const Vector3& other)
-    {
+    Vector3& operator/=(const Vector3& other) {
         x /= other.x;
         y /= other.y;
         z /= other.z;
@@ -429,8 +407,7 @@ struct Vector3
      *
      * @return True if the vector is equal to (0,0,0), false otherwise.
      */
-    bool is_zero() const
-    {
+    bool is_zero() const {
         return !(x + y + z);
     }
 
@@ -439,8 +416,7 @@ struct Vector3
     *
     * @return A new Vector2 object with each component as the reciprocal of the original.
     */
-    Vector3 rcp() const
-    {
+    Vector3 rcp() const {
         static_assert(std::is_floating_point<T>::value, "T must be a floating-point type.");
         return { T(1.0) / x, T(1.0) / y, T(1.0) / z };
     }
@@ -450,8 +426,7 @@ struct Vector3
      *
      * @return The length (magnitude) of the vector.
      */
-    T length() const
-    {
+    T length() const {
         return std::sqrt(x * x + y * y + z * z);
     }
 
@@ -460,8 +435,7 @@ struct Vector3
      *
      * @return The length squared of the vector.
      */
-    T length_sq() const
-    {
+    T length_sq() const {
         return x * x + y * y + z * z;
     }
 
@@ -471,8 +445,7 @@ struct Vector3
      * @param other The other vector for dot product calculation.
      * @return The dot product of the two vectors.
      */
-    T dot(const Vector3& other) const
-    {
+    T dot(const Vector3& other) const {
         return x * other.x + y * other.y + z * other.z;
     }
 
@@ -481,8 +454,7 @@ struct Vector3
      *
      * If the magnitude of the vector is not zero, this method normalizes the vector.
      */
-    void normalize()
-    {
+    void normalize() {
         const T mag = length();
         if (mag != 0.0) (*this) *= 1.0 / mag;
     }
@@ -492,8 +464,7 @@ struct Vector3
      *
      * @return A normalized vector.
      */
-    Vector3 normalized() const
-    {
+    Vector3 normalized() const {
         Vector3 result(*this);
         result.normalize();
         return result;
@@ -504,8 +475,7 @@ struct Vector3
      *
      * @param tangent A vector orthogonal to this vector after normalization.
      */
-    void ortho_normalize(Vector3& tangent)
-    {
+    void ortho_normalize(Vector3& tangent) {
         this->normalize();
         tangent = this->cross(tangent).normalized().cross(*this);
     }
@@ -516,8 +486,7 @@ struct Vector3
      * @param other The other vector to calculate the distance to.
      * @return The distance between this vector and the other vector.
      */
-    T distance(const Vector3& other) const
-    {
+    T distance(const Vector3& other) const {
         return (*this - other).length();
     }
 
@@ -527,8 +496,7 @@ struct Vector3
      * @param other The other vector to calculate the distance to.
      * @return The distance squared between this vector and the other vector.
      */
-    T distance_sq(const Vector3& other) const
-    {
+    T distance_sq(const Vector3& other) const {
         const Vector3 diff = *this - other;
         return diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
     }
@@ -539,8 +507,7 @@ struct Vector3
      * @param other The other vector.
      * @return The angle between the two vectors in radians.
      */
-    T angle(const Vector3& other)
-    {
+    T angle(const Vector3& other) {
         return std::atan2(this->cross(other).length(), this->dot(other));
     }
 
@@ -550,8 +517,7 @@ struct Vector3
      * @param axis The axis of rotation.
      * @param angle The angle of rotation in radians.
      */
-    void rotate(Vector3 axis, T angle)
-    {
+    void rotate(Vector3 axis, T angle) {
         axis.normalize();
         angle *= 0.5f;
 
@@ -570,8 +536,7 @@ struct Vector3
     *
     * @param euler The Euler angles in radians, where x is pitch, y is yaw, and z is roll.
     */
-    void rotate(const Vector3& euler)
-    {
+    void rotate(const Vector3& euler) {
         T pitch = euler.x;
         T yaw = euler.y;
         T roll = euler.z;
@@ -619,8 +584,7 @@ struct Vector3
      * @param angle The angle of rotation in radians.
      * @return The rotated vector.
      */
-    Vector3 rotated(const Vector3& axis, T angle) const
-    {
+    Vector3 rotated(const Vector3& axis, T angle) const {
         Vector3 result(*this);
         result.rotate(axis, angle);
         return result;
@@ -632,8 +596,7 @@ struct Vector3
     * @param euler The Euler angles in radians, where x is pitch, y is yaw, and z is roll.
     * @return The rotated vector.
     */
-    Vector3 rotated(const Vector3& euler)
-    {
+    Vector3 rotated(const Vector3& euler) {
         Vector3 result(*this);
         result.rotate(euler);
         return result;
@@ -645,8 +608,7 @@ struct Vector3
      * @param q The quaternion representing the rotation.
      * @return The rotated vector.
      */
-    Vector3 rotated(const Quat& q)
-    {
+    Vector3 rotated(const Quat& q) {
         Vector3 result(*this);
         result.rotate(q);
         return result;
@@ -658,9 +620,7 @@ struct Vector3
      * @param normal The normal vector (assumed to be a unit vector).
      * @return The reflected vector.
      */
-    Vector3 reflect(const Vector3& normal) const
-    {
-        // Assuming 'normal' is a unit vector
+    Vector3 reflect(const Vector3& normal) const {
         T dot = this->dot(normal);
         return Vector3(
             x - 2.0f * this->dot(normal) * normal.x,
@@ -674,8 +634,7 @@ struct Vector3
      * @param other The other vector.
      * @return The cross product vector.
      */
-    Vector3 cross(const Vector3& other) const
-    {
+    Vector3 cross(const Vector3& other) const {
         return Vector3(
             y * other.z - z * other.y,
             z * other.x - x * other.z,
@@ -689,8 +648,7 @@ struct Vector3
      * @param other The target vector.
      * @return The direction vector from this vector to the target vector.
      */
-    Vector3 direction(const Vector3& other) const
-    {
+    Vector3 direction(const Vector3& other) const {
         return (other - *this).normalized();
     }
 
@@ -699,8 +657,7 @@ struct Vector3
      *
      * @param matrix The 3x3 transformation matrix.
      */
-    void transform(const Mat3& matrix)
-    {
+    void transform(const Mat3& matrix) {
      *this = {
             x * matrix.m[0] + y * matrix.m[3] + z * matrix.m[6],
             x * matrix.m[1] + y * matrix.m[4] + z * matrix.m[7],
@@ -714,8 +671,7 @@ struct Vector3
      * @param matrix The 3x3 transformation matrix.
      * @return The transformed vector.
      */
-    Vector3 transformed(const Mat3& matrix) const
-    {
+    Vector3 transformed(const Mat3& matrix) const {
         return {
             x * matrix.m[0] + y * matrix.m[3] + z * matrix.m[6],
             x * matrix.m[1] + y * matrix.m[4] + z * matrix.m[7],
@@ -744,8 +700,7 @@ struct Vector3
      * @param other The input vector.
      * @return A perpendicular vector to the input vector.
      */
-    static Vector3 perpendicular(const Vector3& other)
-    {
+    static Vector3 perpendicular(const Vector3& other) {
         Vector3 cardinalAxis = {1.0, 0.0, 0.0};
         const Vector3 oabs = other.Abs();
         T min = oabs.x;
@@ -769,8 +724,7 @@ struct Vector3
      * @param delta The maximum distance to move towards 'b'.
      * @return A new vector that is moved towards 'b' by 'delta'.
      */
-    constexpr Vector3 move_towards(Vector3 b, T delta)
-    {
+    constexpr Vector3 move_towards(Vector3 b, T delta) {
         T dx = b.x - x;
         T dy = b.y - y;
         T dz = b.z - z;
@@ -792,8 +746,7 @@ struct Vector3
      * @param t The interpolation factor (should be in the range [0, 1]).
      * @return A new vector that is the result of the linear interpolation.
      */
-    constexpr Vector3 lerp(Vector3 b, T t)
-    {
+    constexpr Vector3 lerp(Vector3 b, T t) {
         static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed.");
         return {
             x + t * (b.x - x),
@@ -808,8 +761,7 @@ struct Vector3
      * @param other The other vector.
      * @return A vector containing the component-wise minimum values.
      */
-    Vector3 min(const Vector3& other) const
-    {
+    Vector3 min(const Vector3& other) const {
         return {
             std::min(x, other.x),
             std::min(y, other.y),
@@ -823,8 +775,7 @@ struct Vector3
      * @param other The other vector.
      * @return A vector containing the component-wise maximum values.
      */
-    Vector3 max(const Vector3& other) const
-    {
+    Vector3 max(const Vector3& other) const {
         return {
             std::max(x, other.x),
             std::max(y, other.y),
@@ -839,8 +790,7 @@ struct Vector3
      * @param max The vector containing the maximum values.
      * @return A vector with each component clamped between the corresponding components of min and max.
      */
-    Vector3 clamp(const Vector3& min, const Vector3& max) const
-    {
+    Vector3 clamp(const Vector3& min, const Vector3& max) const {
         return {
             std::clamp(x, min.x, max.x),
             std::clamp(y, min.y, max.y),
@@ -855,8 +805,7 @@ struct Vector3
      * @param max The maximum value.
      * @return A vector with each component clamped between the minimum and maximum values.
      */
-    Vector3 clamp(T min, T max) const
-    {
+    Vector3 clamp(T min, T max) const {
         return {
             std::clamp(x, min, max),
             std::clamp(y, min, max),
@@ -869,8 +818,7 @@ struct Vector3
      *
      * @return A vector containing the absolute values of each component.
      */
-    Vector3 abs() const
-    {
+    Vector3 abs() const {
         return {
             std::abs(x),
             std::abs(y),

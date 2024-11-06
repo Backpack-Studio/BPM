@@ -36,8 +36,7 @@ namespace bpm {
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_sine_in(T t)
-{
+inline T ease_sine_in(T t) {
     return std::sin(PI / 2 * t);
 }
 
@@ -53,8 +52,7 @@ inline constexpr T ease_sine_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_sine_out(T t)
-{
+inline T ease_sine_out(T t) {
     return 1 + std::sin(PI / 2 * (--t));
 }
 
@@ -70,8 +68,7 @@ inline constexpr T ease_sine_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_sine_in_out(T t)
-{
+inline T ease_sine_in_out(T t) {
     return 0.5 * (1 + std::sin(PI * (t - 0.5)));
 }
 
@@ -87,8 +84,7 @@ inline constexpr T ease_sine_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quad_in(T t)
-{
+inline constexpr T ease_quad_in(T t) {
     return t * t;
 }
 
@@ -104,8 +100,7 @@ inline constexpr T ease_quad_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quad_out(T t)
-{
+inline constexpr T ease_quad_out(T t) {
     return t * (2 - t);
 }
 
@@ -121,8 +116,7 @@ inline constexpr T ease_quad_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quad_in_out(T t)
-{
+inline constexpr T ease_quad_in_out(T t) {
     return t < 0.5 ? 2 * t * t : t * (4 - 2 * t) - 1;
 }
 
@@ -138,8 +132,7 @@ inline constexpr T ease_quad_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_cubic_in(T t)
-{
+inline constexpr T ease_cubic_in(T t) {
     return t * t * t;
 }
 
@@ -155,8 +148,7 @@ inline constexpr T ease_cubic_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_cubic_out(T t)
-{
+inline constexpr T ease_cubic_out(T t) {
     return 1 + (--t) * t * t;
 }
 
@@ -172,8 +164,7 @@ inline constexpr T ease_cubic_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_cubic_in_out(T t)
-{
+inline constexpr T ease_cubic_in_out(T t) {
     return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
 }
 
@@ -189,8 +180,7 @@ inline constexpr T ease_cubic_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quart_in(T t)
-{
+inline constexpr T ease_quart_in(T t) {
     t *= t;
     return t * t;
 }
@@ -207,8 +197,7 @@ inline constexpr T ease_quart_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quart_out(T t)
-{
+inline constexpr T ease_quart_out(T t) {
     t = (--t) * t;
     return 1 - t * t;
 }
@@ -225,8 +214,7 @@ inline constexpr T ease_quart_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quart_in_out(T t)
-{
+inline constexpr T ease_quart_in_out(T t) {
     if (t < 0.5) {
         t *= t;
         return 8 * t * t;
@@ -248,8 +236,7 @@ inline constexpr T ease_quart_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quint_in(T t)
-{
+inline constexpr T ease_quint_in(T t) {
     T t2 = t * t;
     return t * t2 * t2;
 }
@@ -266,8 +253,7 @@ inline constexpr T ease_quint_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quint_out(T t)
-{
+inline constexpr T ease_quint_out(T t) {
     T t2 = (--t) * t;
     return 1 + t * t2 * t2;
 }
@@ -284,8 +270,7 @@ inline constexpr T ease_quint_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_quint_in_out(T t)
-{
+inline constexpr T ease_quint_in_out(T t) {
     T t2;
     if (t < 0.5) {
         t2 = t * t;
@@ -307,8 +292,7 @@ inline constexpr T ease_quint_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_expo_in(T t)
-{
+inline T ease_expo_in(T t) {
     return (std::pow(2, 8 * t) - 1) / 255;
 }
 
@@ -324,8 +308,7 @@ inline constexpr T ease_expo_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_expo_out(T t)
-{
+inline T ease_expo_out(T t) {
     return 1 - std::pow(2, -8 * t);
 }
 
@@ -341,8 +324,7 @@ inline constexpr T ease_expo_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_expo_in_out(T t)
-{
+inline T ease_expo_in_out(T t) {
     if (t < 0.5) {
         return (std::pow(2, 16 * t) - 1) / 510;
     }
@@ -361,8 +343,7 @@ inline constexpr T ease_expo_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_circ_in(T t)
-{
+inline T ease_circ_in(T t) {
     return 1 - std::sqrt(1 - t);
 }
 
@@ -378,8 +359,7 @@ inline constexpr T ease_circ_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_circ_out(T t)
-{
+inline T ease_circ_out(T t) {
     return std::sqrt(t);
 }
 
@@ -395,8 +375,7 @@ inline constexpr T ease_circ_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_circ_in_out(T t)
-{
+inline T ease_circ_in_out(T t) {
     if (t < 0.5) {
         return (1 - std::sqrt(1 - 2 * t)) * 0.5;
     }
@@ -415,8 +394,7 @@ inline constexpr T ease_circ_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_back_in(T t)
-{
+inline constexpr T ease_back_in(T t) {
     return t * t * (2.70158 * t - 1.70158);
 }
 
@@ -432,8 +410,7 @@ inline constexpr T ease_back_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_back_out(T t)
-{
+inline constexpr T ease_back_out(T t) {
     return 1 + (--t) * t * (2.70158 * t + 1.70158);
 }
 
@@ -450,8 +427,7 @@ inline constexpr T ease_back_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_back_in_out(T t)
-{
+inline constexpr T ease_back_in_out(T t) {
     if (t < 0.5) {
         return t * t * (7 * t - 2.5) * 2;
     }
@@ -471,8 +447,7 @@ inline constexpr T ease_back_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_elastic_in(T t)
-{
+inline T ease_elastic_in(T t) {
     T t2 = t * t;
     return t2 * t2 * std::sin(t * PI * 4.5);
 }
@@ -490,8 +465,7 @@ inline constexpr T ease_elastic_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_elastic_out(T t)
-{
+inline T ease_elastic_out(T t) {
     T t2 = (t - 1) * (t - 1);
     return 1 - t2 * t2 * std::cos(t * PI * 4.5);
 }
@@ -509,8 +483,7 @@ inline constexpr T ease_elastic_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_elastic_in_out(T t)
-{
+inline T ease_elastic_in_out(T t) {
     T t2;
     if (t < 0.45) {
         t2 = t * t;
@@ -534,8 +507,7 @@ inline constexpr T ease_elastic_in_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_bounce_in(T t)
-{
+inline T ease_bounce_in(T t) {
     return std::pow(2, 6 * (t - 1)) * std::abs(std::sin(t * PI * 3.5));
 }
 
@@ -551,8 +523,7 @@ inline constexpr T ease_bounce_in(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_bounce_out(T t)
-{
+inline T ease_bounce_out(T t) {
     return 1 - std::pow(2, -6 * t) * std::abs(std::cos(t * PI * 3.5));
 }
 
@@ -568,8 +539,7 @@ inline constexpr T ease_bounce_out(T t)
  * @return The eased parameter value.
  */
 template <typename T>
-inline constexpr T ease_bounce_in_out(T t)
-{
+inline T ease_bounce_in_out(T t) {
     if (t < 0.5) {
         return 8 * std::pow(2, 8 * (t - 1)) * std::abs(std::sin(t * PI * 7));
     }

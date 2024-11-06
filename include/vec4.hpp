@@ -31,6 +31,14 @@
 namespace bpm {
 
 template <typename T>
+struct Vector4;
+
+using Vec4 = Vector4<float>;
+using DVec4 = Vector4<double>;
+using IVec4 = Vector4<int32_t>;
+using UVec4 = Vector4<uint32_t>;
+
+template <typename T>
 struct Vector4
 {
     static_assert(std::is_arithmetic_v<T>, "T must be a numeric type");

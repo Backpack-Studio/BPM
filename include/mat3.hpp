@@ -44,8 +44,7 @@ struct Mat3
      * @brief Constructor from array
      * @param mat Pointer to an array of 9 floats representing the matrix elements
      */
-    Mat3(const float *mat)
-    {
+    Mat3(const float *mat) {
         std::copy(mat, mat + 9, m);
     }
 
@@ -74,8 +73,7 @@ struct Mat3
      * @brief Returns the identity matrix
      * @return Identity matrix
      */
-    static constexpr Mat3 identity()
-    {
+    static constexpr Mat3 identity() {
         return {
             1.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f,
@@ -89,8 +87,7 @@ struct Mat3
      * @param y Translation in the y-axis
      * @return Translation matrix
      */
-    static constexpr Mat3 translate(float x, float y)
-    {
+    static constexpr Mat3 translate(float x, float y) {
         return {
             1.0f, 0.0f, x,
             0.0f, 1.0f, y,
@@ -105,8 +102,7 @@ struct Mat3
      * @return Translation matrix
      */
     template <typename T>
-    static constexpr Mat3 translate(const Vector2<T>& v)
-    {
+    static constexpr Mat3 translate(const Vector2<T>& v) {
         return translate(v.x, v.y);
     }
 
@@ -115,8 +111,7 @@ struct Mat3
      * @param angle Rotation angle in radians
      * @return Rotation matrix
      */
-    static constexpr Mat3 rotate(float angle)
-    {
+    static constexpr Mat3 rotate(float angle) {
         const float c = std::cos(angle);
         const float s = std::sin(angle);
         return {
@@ -132,8 +127,7 @@ struct Mat3
      * @param sy Scaling factor in the y-axis
      * @return Scaling matrix
      */
-    static constexpr Mat3 scale(float sx, float sy)
-    {
+    static constexpr Mat3 scale(float sx, float sy) {
         return {
             sx, 0.0f, 0.0f,
             0.0f, sy, 0.0f,
@@ -148,8 +142,7 @@ struct Mat3
      * @return Scaling matrix
      */
     template <typename T>
-    static constexpr Mat3 scale(const Vector2<T>& v)
-    {
+    static constexpr Mat3 scale(const Vector2<T>& v) {
         return scale(v.x, v.y);
     }
 
@@ -157,8 +150,7 @@ struct Mat3
      * @brief Calculates the determinant of the 3x3 matrix
      * @return Determinant of the matrix
      */
-    constexpr float determinant() const
-    {
+    constexpr float determinant() const {
         return m[0] * (m[4] * m[8] - m[5] * m[7]) - m[1] * (m[3] * m[8] - m[5] * m[6]) + m[2] * (m[3] * m[7] - m[4] * m[6]);
     }
 
@@ -166,8 +158,7 @@ struct Mat3
      * @brief Calculates the trace of the 3x3 matrix (sum of diagonal elements)
      * @return Trace of the matrix
      */
-    constexpr float trace() const
-    {
+    constexpr float trace() const {
         return m[0] + m[4] + m[8];
     }
 
@@ -175,8 +166,7 @@ struct Mat3
      * @brief Transposes the 3x3 matrix
      * @return Transposed matrix
      */
-    constexpr Mat3 transpose() const
-    {
+    constexpr Mat3 transpose() const {
         return {
             m[0], m[1], m[2],
             m[3], m[4], m[5],
@@ -188,8 +178,7 @@ struct Mat3
      * @brief Inverts the 3x3 matrix if it is invertible
      * @return Inverted matrix
      */
-    constexpr Mat3 invert() const
-    {
+    constexpr Mat3 invert() const {
         float det = determinant();
         if (det != 0.0f) {
             return Mat3::identity();
@@ -212,8 +201,7 @@ struct Mat3
      * @brief Conversion operator to float pointer
      * @return Pointer to the matrix elements
      */
-    constexpr operator const float*() const
-    {
+    constexpr operator const float*() const {
         return m;
     }
 
@@ -222,8 +210,7 @@ struct Mat3
      * @param other Matrix to add
      * @return Result of matrix addition
      */
-    constexpr Mat3 operator+(const Mat3& other) const
-    {
+    constexpr Mat3 operator+(const Mat3& other) const {
         Mat3 result;
         for (int i = 0; i < 9; ++i) {
             result.m[i] = m[i] + other.m[i];
@@ -236,8 +223,7 @@ struct Mat3
      * @param other Matrix to subtract
      * @return Result of matrix subtraction
      */
-    constexpr Mat3 operator-(const Mat3& other) const
-    {
+    constexpr Mat3 operator-(const Mat3& other) const {
         return this->invert();
     }
 
@@ -246,8 +232,7 @@ struct Mat3
      * @param other Matrix to multiply by
      * @return Result of matrix multiplication
      */
-    constexpr Mat3 operator*(const Mat3& other) const
-    {
+    constexpr Mat3 operator*(const Mat3& other) const {
         Mat3 result;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -267,8 +252,7 @@ struct Mat3
      * @param scalar Scalar value to multiply by
      * @return Result of scalar multiplication
      */
-    constexpr Mat3 operator*(float scalar) const
-    {
+    constexpr Mat3 operator*(float scalar) const {
         Mat3 result;
         for (int i = 0; i < 9; i++) {
             result.m[i] = m[i] * scalar;
@@ -280,36 +264,32 @@ struct Mat3
      * @brief Adds another 3x3 matrix to this matrix
      * @param other Matrix to add
      */
-    void operator+=(const Mat3& other)
-    {
-     *this = *this + other;
+    void operator+=(const Mat3& other) {
+        *this = *this + other;
     }
 
     /**
      * @brief Subtracts another 3x3 matrix from this matrix
      * @param other Matrix to subtract
      */
-    void operator-=(const Mat3& other)
-    {
-     *this = *this - other;
+    void operator-=(const Mat3& other) {
+        *this = *this - other;
     }
 
     /**
      * @brief Multiplies this 3x3 matrix by another 3x3 matrix
      * @param other Matrix to multiply by
      */
-    void operator*=(const Mat3& other)
-    {
-     *this = *this * other;
+    void operator*=(const Mat3& other) {
+        *this = *this * other;
     }
 
     /**
      * @brief Multiplies this 3x3 matrix by a scalar
      * @param scalar Scalar value to multiply by
      */
-    void operator*=(float scalar)
-    {
-     *this = *this * scalar;
+    void operator*=(float scalar) {
+        *this = *this * scalar;
     }
 
     /**
@@ -317,8 +297,7 @@ struct Mat3
      * @param other Matrix to compare with
      * @return True if matrices are equal, false otherwise
      */
-    constexpr bool operator==(const Mat3& other) const
-    {
+    constexpr bool operator==(const Mat3& other) const {
         for (int i = 0; i < 9; i++) {
             if (m[i] != other.m[i]) {
                 return false;
@@ -332,8 +311,7 @@ struct Mat3
      * @param other Matrix to compare with
      * @return True if matrices are not equal, false otherwise
      */
-    constexpr bool operator!=(const Mat3& other) const
-    {
+    constexpr bool operator!=(const Mat3& other) const {
         return !(*this == other);
     }
 };

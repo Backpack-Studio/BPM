@@ -71,8 +71,7 @@ struct Quat
      * @param angle Rotation angle in radians
      */
     template<typename T>
-    constexpr Quat(const Vector3<T>& axis, float angle)
-    {
+    constexpr Quat(const Vector3<T>& axis, float angle) {
         float halfAngle = angle * 0.5f;
         float s = std::sin(halfAngle);
         w = std::cos(halfAngle);
@@ -90,8 +89,7 @@ struct Quat
      * @param yaw Rotation around Y-axis in radians
      * @param roll Rotation around Z-axis in radians
      */
-    Quat(float pitch, float yaw, float roll)
-    {
+    Quat(float pitch, float yaw, float roll) {
         float cy = std::cos(yaw * 0.5f);
         float sy = std::sin(yaw * 0.5f);
         float cp = std::cos(pitch * 0.5f);
@@ -113,8 +111,7 @@ struct Quat
      * @param q The quaternion to multiply with
      * @return Quat The resulting quaternion
      */
-    constexpr Quat operator*(const Quat& q) const
-    {
+    constexpr Quat operator*(const Quat& q) const {
         return Quat(
             w * q.w - x * q.x - y * q.y - z * q.z,
             w * q.x + x * q.w + y * q.z - z * q.y,
@@ -132,8 +129,7 @@ struct Quat
      * @param q Quaternion to output
      * @return std::ostream& Reference to the output stream
      */
-    friend std::ostream& operator<<(std::ostream& os, const Quat& q)
-    {
+    friend std::ostream& operator<<(std::ostream& os, const Quat& q) {
         os << "Quat(" << q.w << ", " << q.x << ", " << q.y << ", " << q.z << ")";
         return os;
     }
@@ -145,8 +141,7 @@ struct Quat
      * 
      * @return Quat& Reference to this quaternion after normalization
      */
-    Quat& normalize()
-    {
+    Quat& normalize() {
         float magnitude = std::sqrt(w * w + x * x + y * y + z * z);
         if (magnitude > 0.0f) {
             float invMag = 1.0f / magnitude;
@@ -165,8 +160,7 @@ struct Quat
      * 
      * @return Quat The conjugate quaternion
      */
-    constexpr Quat conjugate() const
-    {
+    constexpr Quat conjugate() const {
         return Quat(w, -x, -y, -z);
     }
 
@@ -177,8 +171,7 @@ struct Quat
      * 
      * @return Quat The inverse quaternion
      */
-    constexpr Quat inverse() const
-    {
+    constexpr Quat inverse() const {
         float normSq = w * w + x * x + y * y + z * z;
         if (normSq > 0.0f) {
             float invNorm = 1.0f / normSq;
@@ -195,8 +188,7 @@ struct Quat
      * @param axis Pointer to vector that will store the rotation axis
      * @param angle Pointer to float that will store the rotation angle in radians
      */
-    void to_axis_angle(Vec3* axis, float* angle) const
-    {
+    void to_axis_angle(Vec3* axis, float* angle) const {
         float scale = std::sqrt(x * x + y * y + z * z);
         if (scale > 0.0f) {
             axis->x = x / scale;
@@ -220,8 +212,7 @@ struct Quat
      * @return Vec3 Vector containing (pitch, yaw, roll) in radians
      * @note May experience gimbal lock when pitch approaches ±90 degrees
      */
-    Vec3 to_euler() const
-    {
+    Vec3 to_euler() const {
         float sinr_cosp = 2.0f * (w * x + y * z);
         float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
         float roll = std::atan2(sinr_cosp, cosr_cosp);

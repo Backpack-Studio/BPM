@@ -57,8 +57,7 @@ constexpr double GOLDEN_ANGLE = 137.50776405003785508499; ///< The golden angle 
  * @return The equivalent angle in degrees.
  */
 template <typename T>
-inline constexpr T rad_to_deg(T radians)
-{
+inline constexpr T rad_to_deg(T radians) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return radians * RAD_TO_DEG; // RAD_TO_DEG is assumed to be a constant representing the conversion factor from radians to degrees
 }
@@ -73,8 +72,7 @@ inline constexpr T rad_to_deg(T radians)
  * @return The equivalent angle in radians.
  */
 template <typename T>
-inline constexpr T deg_to_rad(T degrees)
-{
+inline constexpr T deg_to_rad(T degrees) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return degrees * DEG_TO_RAD; // DEG_TO_RAD is assumed to be a constant representing the conversion factor from degrees to radians
 }
@@ -90,8 +88,7 @@ inline constexpr T deg_to_rad(T degrees)
  * @return The fractional part of the input value.
  */
 template <typename T>
-inline constexpr T fract(T value)
-{
+inline constexpr T fract(T value) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return value - static_cast<int32_t>(value); // Subtracting the integer part to get the fractional part
 }
@@ -107,8 +104,7 @@ inline constexpr T fract(T value)
  * @return -1 if value is negative, 0 if value is zero, and 1 if value is positive.
  */
 template <typename T, typename U>
-inline constexpr T sign(U value)
-{
+inline constexpr T sign(U value) {
     static_assert(std::is_signed<T>::value, "Type T must be a signed integer");
     return (static_cast<U>(0) < value) - (value < static_cast<U>(0));
 }
@@ -124,8 +120,7 @@ inline constexpr T sign(U value)
  * @return A 2D vector where each component indicates the sign of the corresponding component in the input vector.
  */
 template <typename T, typename U>
-inline constexpr Vector2<T> sign(const Vector2<U>& v)
-{
+inline constexpr Vector2<T> sign(const Vector2<U>& v) {
     static_assert(std::is_signed<T>::value, "Type T must be a signed integer");
     return Vector2<T>(sign(v.x), sign(v.y));
 }
@@ -141,8 +136,7 @@ inline constexpr Vector2<T> sign(const Vector2<U>& v)
  * @return A 3D vector where each component indicates the sign of the corresponding component in the input vector.
  */
 template <typename T, typename U>
-inline constexpr Vector3<T> sign(const Vector3<U>& v)
-{
+inline constexpr Vector3<T> sign(const Vector3<U>& v) {
     static_assert(std::is_signed<T>::value, "Type T must be a signed integer");
     return Vector3<T>(sign(v.x), sign(v.y), sign(v.z));
 }
@@ -158,8 +152,7 @@ inline constexpr Vector3<T> sign(const Vector3<U>& v)
  * @return A 4D vector where each component indicates the sign of the corresponding component in the input vector.
  */
 template <typename T, typename U>
-inline constexpr Vector4<T> sign(const Vector4<U>& v)
-{
+inline constexpr Vector4<T> sign(const Vector4<U>& v) {
     static_assert(std::is_signed<T>::value, "Type T must be a signed integer");
     return Vector4<T>(sign(v.x), sign(v.y), sign(v.z), sign(v.w));
 }
@@ -175,8 +168,7 @@ inline constexpr Vector4<T> sign(const Vector4<U>& v)
  * @return The factorial of the input integer.
  */
 template <typename T>
-inline constexpr T factorial(T n)
-{
+inline constexpr T factorial(T n) {
     static_assert(std::is_unsigned<T>::value, "Type T must be an unsigned integer");
     return (n == 0 || n == 1) ? 1 : n * factorial(n - 1);
 }
@@ -197,8 +189,7 @@ inline constexpr T factorial(T n)
  *       The function also handles edge cases like `value == 0`, returning `1` in this case.
  */
 template <typename T>
-inline constexpr T next_po2(T value)
-{
+inline constexpr T next_po2(T value) {
     static_assert(std::is_unsigned<T>::value, "Type T must be an unsigned integer");
 
     if (value == 0) return 1;
@@ -234,8 +225,7 @@ inline constexpr T next_po2(T value)
  *       but it provides a simple and reliable way to calculate the next power of two using standard math functions.
  */
 template <typename T>
-inline T next_po2_log(T value)
-{
+inline T next_po2_log(T value) {
     return static_cast<T>(std::pow(2, std::ceil(std::log2(value))));
 }
 
@@ -255,8 +245,7 @@ inline T next_po2_log(T value)
  *       The function also handles edge cases like `value == 0`, returning `0` in this case.
  */
 template <typename T>
-inline constexpr T previous_po2(T value)
-{
+inline constexpr T previous_po2(T value) {
     static_assert(std::is_unsigned<T>::value, "Type T must be an unsigned integer");
 
     if (value == 0) return 0;
@@ -291,8 +280,7 @@ inline constexpr T previous_po2(T value)
  *       but it provides a simple and reliable way to calculate the previous power of two using standard math functions.
  */
 template <typename T>
-inline T previous_po2_log(T value)
-{
+inline T previous_po2_log(T value) {
     return static_cast<T>(std::pow(2, std::floor(std::log2(value))));
 }
 
@@ -313,8 +301,7 @@ inline T previous_po2_log(T value)
  *       The function also handles edge cases like `value == 0`, returning `1` in this case.
  */
 template <typename T>
-inline constexpr T nearest_po2(T value)
-{
+inline constexpr T nearest_po2(T value) {
     static_assert(std::is_unsigned<T>::value, "Type T must be an unsigned integer");
 
     if (value == 0) return 1;
@@ -352,8 +339,7 @@ inline constexpr T nearest_po2(T value)
  *       but it provides a simple and reliable way to calculate the closest power of two using standard math functions.
  */
 template <typename T>
-inline T nearest_po2_log(T value)
-{
+inline T nearest_po2_log(T value) {
     if (value == 0) return 1;
 
     // Calculate the previous power of two using log2 and floor
@@ -378,8 +364,7 @@ inline T nearest_po2_log(T value)
  * @return True if the absolute difference between a and b is less than epsilon, false otherwise.
  */
 template <typename T>
-inline bool approx(T a, T b, T epsilon = std::numeric_limits<T>::epsilon())
-{
+inline bool approx(T a, T b, T epsilon = std::numeric_limits<T>::epsilon()) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return std::abs(a - b) < epsilon;
 }
@@ -394,8 +379,7 @@ inline bool approx(T a, T b, T epsilon = std::numeric_limits<T>::epsilon())
  * @return The new value of 'a' moved towards 'b' by 'delta'.
  */
 template <typename T>
-inline T move_towards(T a, T b, T delta)
-{
+inline T move_towards(T a, T b, T delta) {
     static_assert(std::is_arithmetic_v<T>, "T must be a numeric type");
     T diff = b - a;
     if (std::abs(diff) <= delta) {
@@ -414,8 +398,7 @@ inline T move_towards(T a, T b, T delta)
  * @return A new 2D vector moved towards 'b' by 'delta'.
  */
 template <typename T>
-inline Vector2<T> move_towards(Vector2<T> a, Vector2<T> b, T delta)
-{
+inline Vector2<T> move_towards(Vector2<T> a, Vector2<T> b, T delta) {
     return Vector2<T> {
         move_towards(a.x, b.x, delta),
         move_towards(a.y, b.y, delta)
@@ -432,8 +415,7 @@ inline Vector2<T> move_towards(Vector2<T> a, Vector2<T> b, T delta)
  * @return A new 3D vector moved towards 'b' by 'delta'.
  */
 template <typename T>
-inline Vector3<T> move_towards(Vector3<T> a, Vector3<T> b, T delta)
-{
+inline Vector3<T> move_towards(Vector3<T> a, Vector3<T> b, T delta) {
     return Vector3<T> {
         move_towards(a.x, b.x, delta),
         move_towards(a.y, b.y, delta),
@@ -451,8 +433,7 @@ inline Vector3<T> move_towards(Vector3<T> a, Vector3<T> b, T delta)
  * @return A new 4D vector moved towards 'b' by 'delta'.
  */
 template <typename T>
-inline Vector4<T> move_towards(Vector4<T> a, Vector4<T> b, T delta)
-{
+inline Vector4<T> move_towards(Vector4<T> a, Vector4<T> b, T delta) {
     return Vector4<T> {
         move_towards(a.x, b.x, delta),
         move_towards(a.y, b.y, delta),
@@ -474,8 +455,7 @@ inline Vector4<T> move_towards(Vector4<T> a, Vector4<T> b, T delta)
  * @return The linearly interpolated value between start and end based on t.
  */
 template <typename T>
-inline constexpr T lerp(T start, T end, T t)
-{
+inline constexpr T lerp(T start, T end, T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return start + t * (end - start);
 }
@@ -493,10 +473,9 @@ inline constexpr T lerp(T start, T end, T t)
  * @return The linearly interpolated 2D vector between a and b based on t.
  */
 template <typename T>
-inline constexpr Vector2<T> lerp(const Vector2<T>& a, const Vector2<T>& b, T t)
-{
+inline constexpr Vector2<T> lerp(const Vector2<T>& a, const Vector2<T>& b, T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return {
+    return Vector2<T> {
         a.x + t * (b.x - a.x),
         a.y + t * (b.y - a.y)
     };
@@ -515,10 +494,9 @@ inline constexpr Vector2<T> lerp(const Vector2<T>& a, const Vector2<T>& b, T t)
  * @return The linearly interpolated 3D vector between a and b based on t.
  */
 template <typename T>
-inline constexpr Vector3<T> lerp(const Vector3<T>& a, const Vector3<T>& b, T t)
-{
+inline constexpr Vector3<T> lerp(const Vector3<T>& a, const Vector3<T>& b, T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return {
+    return Vector3<T> {
         a.x + t * (b.x - a.x),
         a.y + t * (b.y - a.y),
         a.z + t * (b.z - a.z)
@@ -538,10 +516,9 @@ inline constexpr Vector3<T> lerp(const Vector3<T>& a, const Vector3<T>& b, T t)
  * @return The linearly interpolated 4D vector between a and b based on t.
  */
 template <typename T>
-inline constexpr Vector4<T> lerp(const Vector4<T>& a, const Vector4<T>& b, T t)
-{
+inline constexpr Vector4<T> lerp(const Vector4<T>& a, const Vector4<T>& b, T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return {
+    return Vector4<T> {
         a.x + t * (b.x - a.x),
         a.y + t * (b.y - a.y),
         a.z + t * (b.z - a.z),
@@ -562,8 +539,7 @@ inline constexpr Vector4<T> lerp(const Vector4<T>& a, const Vector4<T>& b, T t)
  * @return The result of the NLerp operation, normalized.
  */
 template <typename T>
-inline Quat nlerp(const Quat& a, const Quat& b, T t)
-{
+inline Quat nlerp(const Quat& a, const Quat& b, T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return lerp(a, b, t).normalized();
 }
@@ -581,10 +557,8 @@ inline Quat nlerp(const Quat& a, const Quat& b, T t)
  * @return The result of the SLerp operation.
  */
 template <typename T>
-inline Quat slerp(const Quat& q1, Quat q2, T amount)
-{
+inline Quat slerp(const Quat& q1, Quat q2, T amount) {
     float cos_half_theta = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
-
     if (cos_half_theta < 0) {
         cos_half_theta = -cos_half_theta;
         q2.x = -q2.x;
@@ -592,16 +566,13 @@ inline Quat slerp(const Quat& q1, Quat q2, T amount)
         q2.z = -q2.z;
         q2.w = -q2.w;
     }
-
     if (std::fabs(cos_half_theta) >= 1.0f) {
         return q1;
     } else if (cos_half_theta > 0.95f) {
         return nlerp(q1, q2, amount);
     }
-
     float half_theta = std::acos(cos_half_theta);
     float sin_half_theta = std::sqrt(1.0f - cos_half_theta*cos_half_theta);
-
     if (std::fabs(sin_half_theta) < std::numeric_limits<float>::epsilon()) {
         return {
             q1.x * 0.5f + q2.x * 0.5f,
@@ -610,10 +581,8 @@ inline Quat slerp(const Quat& q1, Quat q2, T amount)
             q1.w * 0.5f + q2.w * 0.5f
         };
     }
-
     float ratioA = std::sin((1.0f - amount) * half_theta) / sin_half_theta;
     float ratioB = std::sin(amount * half_theta) / sin_half_theta;
-
     return {
         q1.x * ratioA + q2.x * ratioB,
         q1.y * ratioA + q2.y * ratioB,
@@ -644,8 +613,7 @@ inline Quat slerp(const Quat& q1, Quat q2, T amount)
  *       apply additional logic to ensure `t` is within bounds before calling this function.
  */
 template <typename T>
-inline constexpr T smoothstep(T t)
-{
+inline constexpr T smoothstep(T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return t * t * (static_cast<T>(3.0) - static_cast<T>(2.0) * t);
 }
@@ -672,8 +640,7 @@ inline constexpr T smoothstep(T t)
  *       additional clamping may be applied as needed to enforce strict boundaries.
  */
 template <typename T>
-inline constexpr T smootherstep(T t)
-{
+inline constexpr T smootherstep(T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return t * t * t * (t * (t * static_cast<T>(6) - static_cast<T>(15)) + static_cast<T>(10));
 }
@@ -690,8 +657,7 @@ inline constexpr T smootherstep(T t)
  * @return The normalized value within the range [0, 1].
  */
 template <typename T>
-inline T normalize(T value, T start, T end)
-{
+inline T normalize(T value, T start, T end) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return (value - start) / (end - start);
 }
@@ -706,8 +672,7 @@ inline T normalize(T value, T start, T end)
  * @return The normalized 2D vector.
  */
 template <typename T>
-inline Vector2<T> normalize(const Vector2<T>& v)
-{
+inline Vector2<T> normalize(const Vector2<T>& v) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return v.normalized();
 }
@@ -722,8 +687,7 @@ inline Vector2<T> normalize(const Vector2<T>& v)
  * @return The normalized 3D vector.
  */
 template <typename T>
-inline Vector3<T> normalize(const Vector3<T>& v)
-{
+inline Vector3<T> normalize(const Vector3<T>& v) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return v.normalized();
 }
@@ -738,8 +702,7 @@ inline Vector3<T> normalize(const Vector3<T>& v)
  * @return The normalized 4D vector.
  */
 template <typename T>
-inline Vector4<T> normalize(const Vector4<T>& v)
-{
+inline Vector4<T> normalize(const Vector4<T>& v) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return v.normalized();
 }
@@ -756,8 +719,7 @@ inline Vector4<T> normalize(const Vector4<T>& v)
  * @param v2 The second 3D vector to be ortho-normalized. After the operation, it becomes orthogonal to `v1`.
  */
 template <typename T>
-inline void ortho_normalize(Vector3<T>& v1, Vector3<T>& v2)
-{
+inline void ortho_normalize(Vector3<T>& v1, Vector3<T>& v2) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     v1.normalize(); v2 = v1.cross(v2).normalized().cross(v1);
 }
@@ -774,8 +736,7 @@ inline void ortho_normalize(Vector3<T>& v1, Vector3<T>& v2)
  * @return The cross product vector of `v1` and `v2`.
  */
 template <typename T>
-inline constexpr Vector3<T> cross(const Vector3<T>& v1, const Vector3<T>& v2)
-{
+inline constexpr Vector3<T> cross(const Vector3<T>& v1, const Vector3<T>& v2) {
     return v1.cross(v2);
 }
 
@@ -791,8 +752,7 @@ inline constexpr Vector3<T> cross(const Vector3<T>& v1, const Vector3<T>& v2)
  * @return The dot product of `v1` and `v2`.
  */
 template <typename T>
-inline constexpr T dot(const Vector2<T>& v1, const Vector2<T>& v2)
-{
+inline constexpr T dot(const Vector2<T>& v1, const Vector2<T>& v2) {
     return v1.dot(v2);
 }
 
@@ -808,8 +768,7 @@ inline constexpr T dot(const Vector2<T>& v1, const Vector2<T>& v2)
  * @return The dot product of `v1` and `v2`.
  */
 template <typename T>
-inline constexpr T dot(const Vector3<T>& v1, const Vector3<T>& v2)
-{
+inline constexpr T dot(const Vector3<T>& v1, const Vector3<T>& v2) {
     return v1.dot(v2);
 }
 
@@ -825,8 +784,7 @@ inline constexpr T dot(const Vector3<T>& v1, const Vector3<T>& v2)
  * @return The dot product of `v1` and `v2`.
  */
 template <typename T>
-inline constexpr T dot(const Vector4<T>& v1, const Vector4<T>& v2)
-{
+inline constexpr T dot(const Vector4<T>& v1, const Vector4<T>& v2) {
     return v1.dot(v2);
 }
 
@@ -845,8 +803,7 @@ inline constexpr T dot(const Vector4<T>& v1, const Vector4<T>& v2)
  * @return The remapped value in the output range.
  */
 template <typename T>
-inline constexpr T remap(T value, T in_start, T in_end, T out_start, T out_end)
-{
+inline constexpr T remap(T value, T in_start, T in_end, T out_start, T out_end) {
     return (value - in_start) / (in_end - in_start) * (out_end - out_start) + out_start;
 }
 
@@ -863,8 +820,7 @@ inline constexpr T remap(T value, T in_start, T in_end, T out_start, T out_end)
  * @return The wrapped value within the range [min, max].
  */
 template <typename T>
-inline T wrap(T value, T min, T max)
-{
+inline T wrap(T value, T min, T max) {
     return value - (max - min) * std::floor((value - min) / (max - min));
 }
 
@@ -879,8 +835,7 @@ inline T wrap(T value, T min, T max)
  * @return The wrapped angle within the range [-π, π].
  */
 template <typename T>
-inline T wrap_minus_pi_to_Pi(T th)
-{
+inline T wrap_minus_pi_to_Pi(T th) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return std::atan2(std::sin(th), std::cos(th));
 }
@@ -897,11 +852,10 @@ inline T wrap_minus_pi_to_Pi(T th)
  * @return The angular difference between `current` and `target`.
  */
 template <typename T>
-inline T delta_rad(T current, T target)
-{
+inline T delta_rad(T current, T target) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    const float c0 = std::cos(current), s0 = std::sin(current);
-    const float c1 = std::cos(target), s1 = std::sin(target);
+    const T c0 = std::cos(current), s0 = std::sin(current);
+    const T c1 = std::cos(target), s1 = std::sin(target);
     return std::atan2(c0 * s1 - c1 * s0, c0 * c1 + s1 * s0);
 }
 
@@ -918,8 +872,7 @@ inline T delta_rad(T current, T target)
  * @return The interpolated angle between `start` and `end`.
  */
 template <typename T>
-inline T lerp_rad(T start, T end, T t)
-{
+inline T lerp_rad(T start, T end, T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     start = wrap_minus_pi_to_Pi(start), end = wrap_minus_pi_to_Pi(end);
     return wrap_minus_pi_to_Pi(start + t * delta_rad(start, end));
@@ -936,8 +889,7 @@ inline T lerp_rad(T start, T end, T t)
  * @return The wrapped angle within the range [0, 360).
  */
 template <typename T>
-inline T wrap_to_360(T angle)
-{
+inline T wrap_to_360(T angle) {
     return std::fmod(std::abs(angle), static_cast<T>(360.0));
 }
 
@@ -954,8 +906,7 @@ inline T wrap_to_360(T angle)
  * @return The angular difference between `current` and `target` in degrees.
  */
 template <typename T>
-inline T delta_deg(T current, T target)
-{
+inline T delta_deg(T current, T target) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return delta_rad(current * DEG_TO_RAD, target * DEG_TO_RAD) * RAD_TO_DEG;
 }
@@ -973,8 +924,7 @@ inline T delta_deg(T current, T target)
  * @return The interpolated angle between `start` and `end`.
  */
 template <typename T>
-inline T lerp_deg(T start, T end, T t)
-{
+inline T lerp_deg(T start, T end, T t) {
     static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
     return std::fmod(start + t * delta_deg(start, end) + 360.0f, 360.0f);
 }

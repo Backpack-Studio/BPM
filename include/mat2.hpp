@@ -40,8 +40,7 @@ struct Mat2
      * @brief Constructor from array
      * @param mat Pointer to an array of 4 floats representing the matrix elements
      */
-    Mat2(const float *mat)
-    {
+    Mat2(const float *mat) {
         std::copy(mat, mat + 4, m);
     }
 
@@ -52,8 +51,7 @@ struct Mat2
      * @param m1 Element at index (1, 0)
      * @param m3 Element at index (1, 1)
      */
-    constexpr Mat2(float m0, float m2, float m1, float m3)
-    {
+    constexpr Mat2(float m0, float m2, float m1, float m3) {
         m[0] = m0; m[2] = m1;
         m[1] = m2; m[3] = m3;
     }
@@ -62,8 +60,7 @@ struct Mat2
      * @brief Returns the identity matrix
      * @return Identity matrix
      */
-    static constexpr Mat2 identity()
-    {
+    static constexpr Mat2 identity() {
         return {
             1.0f, 0.0f,
             0.0f, 1.0f
@@ -74,8 +71,7 @@ struct Mat2
      * @brief Calculates the determinant of the matrix
      * @return Determinant of the matrix
      */
-    constexpr float determinant() const
-    {
+    constexpr float determinant() const {
         return m[0] * m[3] - m[1] * m[2];
     }
 
@@ -83,8 +79,7 @@ struct Mat2
      * @brief Calculates the trace of the matrix
      * @return Trace of the matrix
      */
-    constexpr float trace() const
-    {
+    constexpr float trace() const {
         return m[0] + m[3];
     }
 
@@ -92,8 +87,7 @@ struct Mat2
      * @brief Transposes the matrix
      * @return Transposed matrix
      */
-    constexpr Mat2 transpose() const
-    {
+    constexpr Mat2 transpose() const {
         return {
             m[0], m[1],
             m[2], m[3]
@@ -104,8 +98,7 @@ struct Mat2
      * @brief Inverts the matrix if it is invertible
      * @return Inverted matrix
      */
-    constexpr Mat2 invert() const
-    {
+    constexpr Mat2 invert() const {
         float det = determinant();
         if (det == 0.0f) {
             return Mat2::identity();
@@ -118,8 +111,7 @@ struct Mat2
      * @brief Conversion operator to float pointer
      * @return Pointer to the matrix elements
      */
-    constexpr operator const float*() const
-    {
+    constexpr operator const float*() const {
         return m;
     }
 
@@ -128,8 +120,7 @@ struct Mat2
      * @param other Matrix to add
      * @return Result of matrix addition
      */
-    constexpr Mat2 operator+(const Mat2& other) const
-    {
+    constexpr Mat2 operator+(const Mat2& other) const {
         return Mat2(m[0] + other.m[0], m[1] + other.m[1], m[2] + other.m[2], m[3] + other.m[3]);
     }
 
@@ -138,8 +129,7 @@ struct Mat2
      * @param other Matrix to subtract
      * @return Result of matrix subtraction
      */
-    constexpr Mat2 operator-(const Mat2& other) const
-    {
+    constexpr Mat2 operator-(const Mat2& other) const {
         return Mat2(m[0] - other.m[0], m[1] - other.m[1], m[2] - other.m[2], m[3] - other.m[3]);
     }
 
@@ -148,8 +138,7 @@ struct Mat2
      * @param other Matrix to multiply by
      * @return Result of matrix multiplication
      */
-    constexpr Mat2 operator*(const Mat2& other) const
-    {
+    constexpr Mat2 operator*(const Mat2& other) const {
         return {
             m[0] * other.m[0] + m[1] * other.m[2], m[2] * other.m[0] + m[3] * other.m[2],
             m[0] * other.m[1] + m[1] * other.m[3], m[2] * other.m[1] + m[3] * other.m[3]
@@ -161,8 +150,7 @@ struct Mat2
      * @param scalar Scalar value to multiply by
      * @return Result of scalar multiplication
      */
-    constexpr Mat2 operator*(float scalar) const
-    {
+    constexpr Mat2 operator*(float scalar) const {
         return Mat2(m[0] * scalar, m[1] * scalar, m[2] * scalar, m[3] * scalar);
     }
 
@@ -170,8 +158,7 @@ struct Mat2
      * @brief Adds another matrix to this matrix
      * @param other Matrix to add
      */
-    void operator+=(const Mat2& other)
-    {
+    void operator+=(const Mat2& other) {
         *this = *this + other;
     }
 
@@ -179,8 +166,7 @@ struct Mat2
      * @brief Subtracts another matrix from this matrix
      * @param other Matrix to subtract
      */
-    void operator-=(const Mat2& other)
-    {
+    void operator-=(const Mat2& other) {
         *this = *this - other;
     }
 
@@ -188,8 +174,7 @@ struct Mat2
      * @brief Multiplies this matrix by another matrix
      * @param other Matrix to multiply by
      */
-    void operator*=(const Mat2& other)
-    {
+    void operator*=(const Mat2& other) {
         *this = *this * other;
     }
 
@@ -197,8 +182,7 @@ struct Mat2
      * @brief Multiplies this matrix by a scalar
      * @param scalar Scalar value to multiply by
      */
-    void operator*=(float scalar)
-    {
+    void operator*=(float scalar) {
         *this = *this * scalar;
     }
 
@@ -207,8 +191,7 @@ struct Mat2
      * @param other Matrix to compare with
      * @return True if matrices are equal, false otherwise
      */
-    bool operator==(const Mat2& other) const
-    {
+    bool operator==(const Mat2& other) const {
         return (m[0] == other.m[0] && m[1] == other.m[1] && m[2] == other.m[2] && m[3] == other.m[3]);
     }
 
@@ -217,8 +200,7 @@ struct Mat2
      * @param other Matrix to compare with
      * @return True if matrices are not equal, false otherwise
      */
-    bool operator!=(const Mat2& other) const
-    {
+    bool operator!=(const Mat2& other) const {
         return !(*this == other);
     }
 };

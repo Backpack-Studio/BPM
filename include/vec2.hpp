@@ -94,8 +94,7 @@ struct Vector2
      * @return A Vector2 containing the components of the current vector casted to the type U.
      */
     template <typename U>
-    constexpr operator Vector2<U>() const
-    {
+    constexpr operator Vector2<U>() const {
         return Vector2<U>(static_cast<U>(x), static_cast<U>(y));
     }
 
@@ -107,8 +106,7 @@ struct Vector2
      * @param axis The index of the component to access (0 for x, 1 for y).
      * @return A reference to the component at the specified index.
      */
-    constexpr T& operator[](int axis)
-    {
+    constexpr T& operator[](int axis) {
         switch (axis) {
             case 0:  return x;
             default: return y;
@@ -124,8 +122,7 @@ struct Vector2
      * @param axis The index of the component to access (0 for x, 1 for y).
      * @return A const reference to the component at the specified index.
      */
-    constexpr const T& operator[](int axis) const
-    {
+    constexpr const T& operator[](int axis) const {
         switch (axis) {
             case 0:  return x;
             default: return y;
@@ -139,8 +136,7 @@ struct Vector2
      *
      * @return The negation of the current vector.
      */
-    constexpr Vector2 operator-() const
-    {
+    constexpr Vector2 operator-() const {
         return { -x, -y };
     }
 
@@ -152,8 +148,7 @@ struct Vector2
      * @param scalar The scalar value to subtract from each component.
      * @return A new vector resulting from the subtraction operation.
      */
-    constexpr Vector2 operator-(T scalar) const
-    {
+    constexpr Vector2 operator-(T scalar) const {
         return Vector2(x - scalar, y - scalar);
     }
 
@@ -165,8 +160,7 @@ struct Vector2
      * @param scalar The scalar value to add to each component.
      * @return A new vector resulting from the addition operation.
      */
-    constexpr Vector2 operator+(T scalar) const
-    {
+    constexpr Vector2 operator+(T scalar) const {
         return Vector2(x + scalar, y + scalar);
     }
 
@@ -178,8 +172,7 @@ struct Vector2
      * @param scalar The scalar value to multiply each component by.
      * @return A new vector resulting from the multiplication operation.
      */
-    constexpr Vector2 operator*(T scalar) const
-    {
+    constexpr Vector2 operator*(T scalar) const {
         return Vector2(x * scalar, y * scalar);
     }
 
@@ -194,8 +187,7 @@ struct Vector2
      * @param scalar The scalar value to divide each component by.
      * @return A new vector resulting from the division operation.
      */
-    constexpr Vector2 operator/(T scalar) const
-    {
+    constexpr Vector2 operator/(T scalar) const {
         if constexpr (std::is_floating_point<T>::value) {
             const T inv = static_cast<T>(1.0) / scalar;
             return Vector2(x * inv, y * inv);
@@ -211,8 +203,7 @@ struct Vector2
      * @param other The vector to subtract from the current vector.
      * @return A new vector resulting from the subtraction operation.
      */
-    constexpr Vector2 operator-(const Vector2& other) const
-    {
+    constexpr Vector2 operator-(const Vector2& other) const {
         return Vector2(x - other.x, y - other.y);
     }
 
@@ -224,8 +215,7 @@ struct Vector2
      * @param other The vector to add to the current vector.
      * @return A new vector resulting from the addition operation.
      */
-    constexpr Vector2 operator+(const Vector2& other) const
-    {
+    constexpr Vector2 operator+(const Vector2& other) const {
         return Vector2(x + other.x, y + other.y);
     }
 
@@ -237,8 +227,7 @@ struct Vector2
      * @param other The vector to multiply with the current vector.
      * @return A new vector resulting from the multiplication operation.
      */
-    constexpr Vector2 operator*(const Vector2& other) const
-    {
+    constexpr Vector2 operator*(const Vector2& other) const {
         return Vector2(x * other.x, y * other.y);
     }
 
@@ -253,8 +242,7 @@ struct Vector2
      * @param other The vector by which to divide the current vector.
      * @return A new vector resulting from the division operation.
      */
-    constexpr Vector2 operator/(const Vector2& other) const
-    {
+    constexpr Vector2 operator/(const Vector2& other) const {
         return Vector2(x / other.x, y / other.y);
     }
 
@@ -266,8 +254,7 @@ struct Vector2
      * @param other The vector to compare with the current vector.
      * @return True if the vectors are equal (i.e., all components are equal), false otherwise.
      */
-    constexpr bool operator==(const Vector2& other) const
-    {
+    constexpr bool operator==(const Vector2& other) const {
         return (x == other.x) && (y == other.y);
     }
 
@@ -279,8 +266,7 @@ struct Vector2
      * @param other The vector to compare with the current vector.
      * @return True if the vectors are not equal (i.e., any component is not equal), false otherwise.
      */
-    constexpr bool operator!=(const Vector2& other) const
-    {
+    constexpr bool operator!=(const Vector2& other) const {
         return (x != other.x) || (y != other.y);
     }
 
@@ -292,8 +278,7 @@ struct Vector2
      * @param scalar The scalar value to subtract from each component.
      * @return A reference to the modified current vector.
      */
-    Vector2& operator-=(T scalar)
-    {
+    Vector2& operator-=(T scalar) {
         x -= scalar;
         y -= scalar;
         return *this;
@@ -307,8 +292,7 @@ struct Vector2
      * @param scalar The scalar value to add to each component.
      * @return A reference to the modified current vector.
      */
-    Vector2& operator+=(T scalar)
-    {
+    Vector2& operator+=(T scalar) {
         x += scalar;
         y += scalar;
         return *this;
@@ -322,8 +306,7 @@ struct Vector2
      * @param scalar The scalar value to multiply each component by.
      * @return A reference to the modified current vector.
      */
-    Vector2& operator*=(T scalar)
-    {
+    Vector2& operator*=(T scalar) {
         x *= scalar;
         y *= scalar;
         return *this;
@@ -337,8 +320,7 @@ struct Vector2
      * @param scalar The scalar value to divide each component by.
      * @return A reference to the modified current vector.
      */
-    Vector2& operator/=(T scalar)
-    {
+    Vector2& operator/=(T scalar) {
         if constexpr (std::is_floating_point<T>::value) {
             const T inv = static_cast<T>(1.0) / scalar;
             x *= inv, y *= inv;
@@ -357,8 +339,7 @@ struct Vector2
      * @param other The vector to subtract from the current vector.
      * @return A reference to the modified current vector.
      */
-    Vector2& operator-=(const Vector2& other)
-    {
+    Vector2& operator-=(const Vector2& other) {
         x -= other.x;
         y -= other.y;
         return *this;
@@ -372,8 +353,7 @@ struct Vector2
      * @param other The vector to add to the current vector.
      * @return A reference to the modified current vector.
      */
-    Vector2& operator+=(const Vector2& other)
-    {
+    Vector2& operator+=(const Vector2& other) {
         x += other.x;
         y += other.y;
         return *this;
@@ -387,8 +367,7 @@ struct Vector2
      * @param other The vector to multiply with the current vector.
      * @return A reference to the modified current vector.
      */
-    Vector2& operator*=(const Vector2& other)
-    {
+    Vector2& operator*=(const Vector2& other) {
         x *= other.x;
         y *= other.y;
         return *this;
@@ -406,8 +385,7 @@ struct Vector2
      * @param other The vector by which to divide the current vector.
      * @return A reference to the modified current vector.
      */
-    Vector2& operator/=(const Vector2& other)
-    {
+    Vector2& operator/=(const Vector2& other) {
         x /= other.x;
         y /= other.y;
         return *this;
@@ -432,8 +410,7 @@ struct Vector2
      *
      * @return True if the vector is equal to (0,0), false otherwise.
      */
-    constexpr bool is_zero() const
-    {
+    constexpr bool is_zero() const {
         return !(x != 0 || y != 0);
     }
 
@@ -442,8 +419,7 @@ struct Vector2
     *
     * @return A new Vector2 object with each component as the reciprocal of the original.
     */
-    Vector2 rcp() const
-    {
+    Vector2 rcp() const {
         static_assert(std::is_floating_point<T>::value, "T must be a floating-point type.");
         return { T(1.0) / x, T(1.0) / y };
     }
@@ -453,8 +429,7 @@ struct Vector2
      *
      * @return The length (magnitude) of the vector.
      */
-    T length() const
-    {
+    T length() const {
         return std::sqrt(x * x + y * y);
     }
 
@@ -463,8 +438,7 @@ struct Vector2
      *
      * @return The squared length of the vector.
      */
-    constexpr T length_sq() const
-    {
+    constexpr T length_sq() const {
         return x * x + y * y;
     }
 
@@ -474,8 +448,7 @@ struct Vector2
      * @param other The other vector to calculate the dot product with.
      * @return The dot product of the two vectors.
      */
-    constexpr T dot(const Vector2& other) const
-    {
+    constexpr T dot(const Vector2& other) const {
         return x * other.x + y * other.y;
     }
 
@@ -485,8 +458,7 @@ struct Vector2
      * Normalizes the current vector, making it a unit vector (a vector with a magnitude of 1).
      * If the magnitude of the vector is zero, no operation is performed.
      */
-    void normalize()
-    {
+    void normalize() {
         const T len = length();
         if (len != 0.0) (*this) *= 1.0 / len;
     }
@@ -498,8 +470,7 @@ struct Vector2
      *
      * @return A normalized vector.
      */
-    Vector2 normalized() const
-    {
+    Vector2 normalized() const {
         Vector2 result(*this);
         result.normalize();
         return result;
@@ -511,8 +482,7 @@ struct Vector2
      * @param other The other vector to calculate the distance to.
      * @return The Euclidean distance between the two vectors.
      */
-    T distance(const Vector2& other) const
-    {
+    T distance(const Vector2& other) const {
         return (*this - other).length();
     }
 
@@ -522,8 +492,7 @@ struct Vector2
      * @param other The other vector to calculate the squared distance to.
      * @return The squared Euclidean distance between the two vectors.
      */
-    constexpr T distance_sq(const Vector2& other) const
-    {
+    constexpr T distance_sq(const Vector2& other) const {
         const Vector2 diff = *this - other;
         return diff.x * diff.x + diff.y * diff.y;
     }
@@ -533,8 +502,7 @@ struct Vector2
      *
      * @param angle The angle in radians by which to rotate the vector.
      */
-    void rotate(T angle)
-    {
+    void rotate(T angle) {
         const T c = std::cos(angle);
         const T s = std::sin(angle);
         x = x * c - y * s, y = x * s + y * c;
@@ -546,8 +514,7 @@ struct Vector2
      * @param angle The angle in radians by which to rotate the vector.
      * @return A rotated copy of the vector.
      */
-    Vector2 rotated(T angle) const
-    {
+    Vector2 rotated(T angle) const {
         const T c = std::cos(angle);
         const T s = std::sin(angle);
         return Vector2(x * c - y * s, x * s + y * c);
@@ -559,8 +526,7 @@ struct Vector2
      * @param c The cosine value of the rotation angle.
      * @param s The sine value of the rotation angle.
      */
-    void rotate(T c, T s)
-    {
+    void rotate(T c, T s) {
         x = x * c - y * s;
         y = x * s + y * c;
     }
@@ -572,8 +538,7 @@ struct Vector2
      * @param s The sine value of the rotation angle.
      * @return A rotated copy of the vector.
      */
-    Vector2 rotated(T c, T s) const
-    {
+    Vector2 rotated(T c, T s) const {
         return Vector2(x * c - y * s, x * s + y * c);
     }
 
@@ -586,8 +551,7 @@ struct Vector2
      * @param normal The normal vector used for reflection.
      * @return The reflected vector.
      */
-    constexpr Vector2 reflect(const Vector2& normal) const
-    {
+    constexpr Vector2 reflect(const Vector2& normal) const {
         T dot = this->Dot(normal);
         return Vector2(
             x - 2.0 * dot * normal.x,
@@ -600,8 +564,7 @@ struct Vector2
      *
      * @return The angle in radians of the vector with respect to the positive x-axis.
      */
-    T angle() const
-    {
+    T angle() const {
         return std::atan2(y, x);
     }
 
@@ -611,8 +574,7 @@ struct Vector2
      * @param other The other vector to calculate the angle with respect to.
      * @return The angle in radians between the two vectors with respect to the positive x-axis.
      */
-    T angle(const Vector2& other) const
-    {
+    T angle(const Vector2& other) const {
         return std::atan2(y - other.y, x - other.x);
     }
 
@@ -624,8 +586,7 @@ struct Vector2
      *
      * @param matrix The 2D transformation matrix to apply.
      */
-    constexpr void transform(const Mat3& matrix)
-    {
+    constexpr void transform(const Mat3& matrix) {
      *this = {
             x * matrix.m[0] + y * matrix.m[3] + matrix.m[6],
             x * matrix.m[1] + y * matrix.m[4] + matrix.m[7]
@@ -641,8 +602,7 @@ struct Vector2
      * @param matrix The 2D transformation matrix to apply.
      * @return The transformed vector.
      */
-    constexpr Vector2 transformed(const Mat3& matrix)
-    {
+    constexpr Vector2 transformed(const Mat3& matrix) {
         return {
             x * matrix.m[0] + y * matrix.m[3] + matrix.m[6],
             x * matrix.m[1] + y * matrix.m[4] + matrix.m[7]
@@ -659,8 +619,7 @@ struct Vector2
      * @param delta The maximum distance to move towards 'b'.
      * @return A new vector that is moved towards 'b' by 'delta'.
      */
-    constexpr Vector2 move_towards(Vector2 b, T delta)
-    {
+    constexpr Vector2 move_towards(Vector2 b, T delta) {
         T dx = b.x - x;
         T dy = b.y - y;
         return {
@@ -680,8 +639,7 @@ struct Vector2
      * @param t The interpolation factor (should be in the range [0, 1]).
      * @return A new vector that is the result of the linear interpolation.
      */
-    constexpr Vector2 lerp(Vector2 b, T t)
-    {
+    constexpr Vector2 lerp(Vector2 b, T t) {
         static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed.");
         return {
             x + t * (b.x - x),
@@ -695,8 +653,7 @@ struct Vector2
      * @param other The other vector to compare with.
      * @return A vector where each component is the minimum of the corresponding components of the current vector and the other vector.
      */
-    constexpr Vector2 min(const Vector2& other) const
-    {
+    constexpr Vector2 min(const Vector2& other) const {
         return {
             std::min(x, other.x),
             std::min(y, other.y)
@@ -709,8 +666,7 @@ struct Vector2
      * @param other The other vector to compare with.
      * @return A vector where each component is the maximum of the corresponding components of the current vector and the other vector.
      */
-    constexpr Vector2 max(const Vector2& other) const
-    {
+    constexpr Vector2 max(const Vector2& other) const {
         return {
             std::max(x, other.x),
             std::max(y, other.y)
@@ -724,8 +680,7 @@ struct Vector2
      * @param max The maximum vector defining the upper bounds for each component.
      * @return A vector where each component is clamped within the specified range.
      */
-    constexpr Vector2 clamp(const Vector2& min, const Vector2& max) const
-    {
+    constexpr Vector2 clamp(const Vector2& min, const Vector2& max) const {
         return {
             std::clamp(x, min.x, max.x),
             std::clamp(y, min.y, max.y)
@@ -739,8 +694,7 @@ struct Vector2
      * @param max The maximum value defining the upper bounds for each component.
      * @return A vector where each component is clamped within the specified scalar range.
      */
-    constexpr Vector2 clamp(T min, T max) const
-    {
+    constexpr Vector2 clamp(T min, T max) const {
         return {
             std::clamp(x, min, max),
             std::clamp(y, min, max)
@@ -752,8 +706,7 @@ struct Vector2
      *
      * @return A vector where each component is the absolute value of the corresponding component of the current vector.
      */
-    Vector2 abs() const
-    {
+    Vector2 abs() const {
         return {
             std::abs(x),
             std::abs(y)
