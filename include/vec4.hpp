@@ -613,10 +613,28 @@ struct Vector4
         };
     }
 
+    /**
+     * @brief Returns a pointer to the underlying data of the vector.
+     * 
+     * This method provides a pointer to the raw data of the vector, allowing direct
+     * access to the components. The returned pointer is of type `T*`, where `T` is the
+     * data type (e.g., `float`, `double`) of the vector's components.
+     * 
+     * @return T* Pointer to the underlying data of the vector.
+     */
     T* ptr() {
         return reinterpret_cast<T*>(this);
     }
 
+    /**
+     * @brief Returns a constant pointer to the underlying data of the vector.
+     * 
+     * This method provides a pointer to the raw data of the vector, allowing direct
+     * access to the components in a read-only manner. The returned pointer is of type `const T*`,
+     * where `T` is the data type (e.g., `float`, `double`) of the vector's components.
+     * 
+     * @return const T* Constant pointer to the underlying data of the vector.
+     */
     const T* ptr() const {
         return reinterpret_cast<const T*>(this);
     }
