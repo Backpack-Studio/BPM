@@ -32,9 +32,9 @@ As BPM is a header-only library, integration into your project is straightforwar
 
 3. In your source files, you can include the necessary headers individually, like this:
    ```cpp
-   #include "BPM/Vec2.hpp"  // For 2D vectors
-   #include "BPM/Mat3.hpp"  // For 3x3 matrices
-   #include "BPM/Quat.hpp"  // For quaternions
+   #include "BPM/vec2.hpp"  // For 2D vectors
+   #include "BPM/mat3.hpp"  // For 3x3 matrices
+   #include "BPM/quat.hpp"  // For quaternions
    ```
 
    Or, for convenience, you can include the **entire library** by including the `BPM.hpp` header:
@@ -47,8 +47,8 @@ As BPM is a header-only library, integration into your project is straightforwar
 Once the library is integrated, you can start using its various features in your code. Here’s a quick example:
 
 ```cpp
-#include "BPM/Vec3.hpp"
-#include "BPM/Mat4.hpp"
+#include "BPM/vec3.hpp"
+#include "BPM/mat4.hpp"
 
 int main() {
     bpm::Vec3 v1(1.0f, 2.0f, 3.0f);
