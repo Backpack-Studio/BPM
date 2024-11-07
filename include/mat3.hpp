@@ -20,33 +20,26 @@
 #ifndef BPM_MAT3_HPP
 #define BPM_MAT3_HPP
 
-#include <algorithm>
+#include "./vecx.hpp"
+#include "./vec2.hpp"
+#include "./vec3.hpp"
+
 #include <cmath>
 
 namespace bpm {
 
-template <typename T>
-class Vector2;
-
 /**
  * @brief 3x3 Matrix structure
  */
-struct Mat3
+class Mat3 : public Vector<float, 3*3, Mat3>
 {
-    float m[9]{};   ///< 3x3 matrix elements
-
+public:
     /**
      * @brief Default constructor
      */
-    constexpr Mat3() = default;
-
-    /**
-     * @brief Constructor from array
-     * @param mat Pointer to an array of 9 floats representing the matrix elements
-     */
-    Mat3(const float *mat) {
-        std::copy(mat, mat + 9, m);
-    }
+    constexpr Mat3()
+        : Vector<float, 3*3, Mat3>()
+    { }
 
     /**
      * @brief Constructor from individual elements
@@ -61,13 +54,14 @@ struct Mat3
      * @param m8 Element at index (2, 2)
      */
     constexpr Mat3(float m0, float m3, float m6,
-                float m1, float m4, float m7,
-                float m2, float m5, float m8)
-    {
-        m[0] = m0;  m[3] = m3;  m[6] = m6;
-        m[1] = m1;  m[4] = m4;  m[7] = m7;
-        m[2] = m2;  m[5] = m5;  m[8] = m8;
-    }
+                   float m1, float m4, float m7,
+                   float m2, float m5, float m8)
+    : Vector<float, 3*3, Mat3>({
+        m0, m1, m2,
+        m3, m4, m5,
+        m6, m7, m8
+    })
+    { }
 
     /**
      * @brief Returns the identity matrix
@@ -147,87 +141,6 @@ struct Mat3
     }
 
     /**
-     * @brief Calculates the determinant of the 3x3 matrix
-     * @return Determinant of the matrix
-     */
-    constexpr float determinant() const {
-        return m[0] * (m[4] * m[8] - m[5] * m[7]) - m[1] * (m[3] * m[8] - m[5] * m[6]) + m[2] * (m[3] * m[7] - m[4] * m[6]);
-    }
-
-    /**
-     * @brief Calculates the trace of the 3x3 matrix (sum of diagonal elements)
-     * @return Trace of the matrix
-     */
-    constexpr float trace() const {
-        return m[0] + m[4] + m[8];
-    }
-
-    /**
-     * @brief Transposes the 3x3 matrix
-     * @return Transposed matrix
-     */
-    constexpr Mat3 transpose() const {
-        return {
-            m[0], m[1], m[2],
-            m[3], m[4], m[5],
-            m[6], m[7], m[8]
-        };
-    }
-
-    /**
-     * @brief Inverts the 3x3 matrix if it is invertible
-     * @return Inverted matrix
-     */
-    constexpr Mat3 invert() const {
-        float det = determinant();
-        if (det != 0.0f) {
-            return Mat3::identity();
-        }
-        float invDet = 1.0f / det;
-        Mat3 result;
-        result.m[0] = (m[4] * m[8] - m[5] * m[7]) * invDet;
-        result.m[1] = (m[2] * m[7] - m[1] * m[8]) * invDet;
-        result.m[2] = (m[1] * m[5] - m[2] * m[4]) * invDet;
-        result.m[3] = (m[5] * m[6] - m[3] * m[8]) * invDet;
-        result.m[4] = (m[0] * m[8] - m[2] * m[6]) * invDet;
-        result.m[5] = (m[2] * m[3] - m[0] * m[5]) * invDet;
-        result.m[6] = (m[3] * m[7] - m[4] * m[6]) * invDet;
-        result.m[7] = (m[1] * m[6] - m[0] * m[7]) * invDet;
-        result.m[8] = (m[0] * m[4] - m[1] * m[3]) * invDet;
-        return result;
-    }
-
-    /**
-     * @brief Conversion operator to float pointer
-     * @return Pointer to the matrix elements
-     */
-    constexpr operator const float*() const {
-        return m;
-    }
-
-    /**
-     * @brief Adds another 3x3 matrix to this matrix
-     * @param other Matrix to add
-     * @return Result of matrix addition
-     */
-    constexpr Mat3 operator+(const Mat3& other) const {
-        Mat3 result;
-        for (int i = 0; i < 9; ++i) {
-            result.m[i] = m[i] + other.m[i];
-        }
-        return result;
-    }
-
-    /**
-     * @brief Subtracts another 3x3 matrix from this matrix
-     * @param other Matrix to subtract
-     * @return Result of matrix subtraction
-     */
-    constexpr Mat3 operator-(const Mat3& other) const {
-        return this->invert();
-    }
-
-    /**
      * @brief Multiplies this 3x3 matrix by another 3x3 matrix
      * @param other Matrix to multiply by
      * @return Result of matrix multiplication
@@ -238,83 +151,121 @@ struct Mat3
             for (int j = 0; j < 3; j++) {
                 float sum = 0.0f;
                 for (int k = 0; k < 3; k++) {
-                    sum += m[i * 3 + k] * other.m[k * 3 + j];
+                    sum += v[i * 3 + k] * other.v[k * 3 + j];
                 }
-                result.m[i * 3 + j] = sum;
+                result.v[i * 3 + j] = sum;
             }
         }
-
         return result;
-    }
-
-    /**
-     * @brief Multiplies this 3x3 matrix by a scalar
-     * @param scalar Scalar value to multiply by
-     * @return Result of scalar multiplication
-     */
-    constexpr Mat3 operator*(float scalar) const {
-        Mat3 result;
-        for (int i = 0; i < 9; i++) {
-            result.m[i] = m[i] * scalar;
-        }
-        return result;
-    }
-
-    /**
-     * @brief Adds another 3x3 matrix to this matrix
-     * @param other Matrix to add
-     */
-    void operator+=(const Mat3& other) {
-        *this = *this + other;
-    }
-
-    /**
-     * @brief Subtracts another 3x3 matrix from this matrix
-     * @param other Matrix to subtract
-     */
-    void operator-=(const Mat3& other) {
-        *this = *this - other;
-    }
-
-    /**
-     * @brief Multiplies this 3x3 matrix by another 3x3 matrix
-     * @param other Matrix to multiply by
-     */
-    void operator*=(const Mat3& other) {
-        *this = *this * other;
-    }
-
-    /**
-     * @brief Multiplies this 3x3 matrix by a scalar
-     * @param scalar Scalar value to multiply by
-     */
-    void operator*=(float scalar) {
-        *this = *this * scalar;
-    }
-
-    /**
-     * @brief Checks if two 3x3 matrices are equal
-     * @param other Matrix to compare with
-     * @return True if matrices are equal, false otherwise
-     */
-    constexpr bool operator==(const Mat3& other) const {
-        for (int i = 0; i < 9; i++) {
-            if (m[i] != other.m[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @brief Checks if two 3x3 matrices are not equal
-     * @param other Matrix to compare with
-     * @return True if matrices are not equal, false otherwise
-     */
-    constexpr bool operator!=(const Mat3& other) const {
-        return !(*this == other);
     }
 };
+
+/* Matrix 3x3 Algorithms Implementation */
+
+/**
+ * @brief Calculates the determinant of the 3x3 matrix
+ * @return Determinant of the matrix
+ */
+inline constexpr float determinant(const Mat3& m) {
+    return m[0] * (m[4] * m[8] - m[5] * m[7]) - m[1] * (m[3] * m[8] - m[5] * m[6]) + m[2] * (m[3] * m[7] - m[4] * m[6]);
+}
+
+/**
+ * @brief Calculates the trace of the 3x3 matrix (sum of diagonal elements)
+ * @return Trace of the matrix
+ */
+inline constexpr float trace(const Mat3& m) {
+    return m[0] + m[4] + m[8];
+}
+
+/**
+ * @brief Transposes the 3x3 matrix
+ * @return Transposed matrix
+ */
+inline constexpr Mat3 transpose(const Mat3& m) {
+    return Mat3 {
+        m[0], m[1], m[2],
+        m[3], m[4], m[5],
+        m[6], m[7], m[8]
+    };
+}
+
+/**
+ * @brief Inverts the 3x3 matrix if it is invertible
+ * @return Inverted matrix
+ */
+inline constexpr Mat3 invert(const Mat3 m) {
+    float det = determinant(m);
+    if (det != 0.0f) {
+        return Mat3::identity();
+    }
+    float inv_det = 1.0f / det;
+    Mat3 result;
+    result[0] = (m[4] * m[8] - m[5] * m[7]) * inv_det;
+    result[1] = (m[2] * m[7] - m[1] * m[8]) * inv_det;
+    result[2] = (m[1] * m[5] - m[2] * m[4]) * inv_det;
+    result[3] = (m[5] * m[6] - m[3] * m[8]) * inv_det;
+    result[4] = (m[0] * m[8] - m[2] * m[6]) * inv_det;
+    result[5] = (m[2] * m[3] - m[0] * m[5]) * inv_det;
+    result[6] = (m[3] * m[7] - m[4] * m[6]) * inv_det;
+    result[7] = (m[1] * m[6] - m[0] * m[7]) * inv_det;
+    result[8] = (m[0] * m[4] - m[1] * m[3]) * inv_det;
+    return result;
+}
+
+/**
+ * @brief Transforms a 2D vector using a 2D transformation matrix.
+ * 
+ * This function applies a 2D transformation to the input vector `v` using a 
+ * 3x3 matrix `matrix`. The transformation is performed by multiplying the 
+ * 2D vector with the transformation matrix in homogeneous coordinates, 
+ * where the vector is treated as [x, y, 1] and the result is [x', y'].
+ * 
+ * The matrix multiplication is performed as:
+ * 
+ *     [x' y'] = [x y 1] * matrix
+ * 
+ * @tparam T The type of the components in the input and output vectors (typically floating-point).
+ * 
+ * @param v The input 2D vector to be transformed.
+ * @param matrix The 3x3 transformation matrix to apply to the vector.
+ * 
+ * @return A new 2D vector that is the result of the transformation.
+ */
+template <typename T>
+inline constexpr Vector2<T> transform(const Vector2<T>& v, const Mat3& matrix) {
+    return Vector2<T> {
+        v[0] * matrix[0] + v[1] * matrix[3] + matrix[6],
+        v[0] * matrix[1] + v[1] * matrix[4] + matrix[7]
+    };
+}
+
+/**
+ * @brief Transforms a 3D vector using a 3x3 transformation matrix.
+ * 
+ * This function applies a 3D transformation to the input vector `v` using a 
+ * 3x3 matrix `matrix`. The transformation is performed by multiplying the 
+ * 3D vector with the transformation matrix.
+ * 
+ * The matrix multiplication is performed as:
+ * 
+ *     [x' y' z'] = [x y z] * matrix
+ * 
+ * @tparam T The type of the components in the input and output vectors (typically floating-point).
+ * 
+ * @param v The input 3D vector to be transformed.
+ * @param matrix The 3x3 transformation matrix to apply to the vector.
+ * 
+ * @return A new 3D vector that is the result of the transformation.
+ */
+template <typename T>
+inline constexpr Vector3<T> transform(const Vector3<T>& v, const Mat3& matrix) {
+    return Vector3<T> {
+        v[0] * matrix[0] + v[1] * matrix[3] + v[2] * matrix[6],
+        v[0] * matrix[1] + v[1] * matrix[4] + v[2] * matrix[7],
+        v[0] * matrix[2] + v[1] * matrix[5] + v[2] * matrix[8]
+    };
+}
 
 } // namespace bpm
 

@@ -20,10 +20,9 @@
 #ifndef BPM_VEC4_HPP
 #define BPM_VEC4_HPP
 
+#include "./vecx.hpp"
 #include "./vec3.hpp"
 
-#include <type_traits>
-#include <algorithm>
 #include <cstdint>
 #include <ostream>
 #include <cmath>
@@ -39,20 +38,14 @@ using IVec4 = Vector4<int32_t>;
 using UVec4 = Vector4<uint32_t>;
 
 template <typename T>
-struct Vector4
+class Vector4 : public Vector<T, 4, Vector4<T>>
 {
-    static_assert(std::is_arithmetic_v<T>, "T must be a numeric type");
-    static constexpr int DIMENSIONS = 4;
-    typedef T value_type;
-
-    T x, y, z, w;
-
+public:
     /**
      * @brief Default constructor. Constructs a vector with all components set to zero.
      */
     constexpr Vector4()
-        : x(0), y(0),
-            z(0), w(0)
+        : Vector<T, 4, Vector4<T>>()
     { }
 
     /**
@@ -61,8 +54,9 @@ struct Vector4
      * @param value The value to set for all components.
      */
     constexpr explicit Vector4(T value)
-        : x(value), y(value),
-            z(value), w(value)
+        : Vector<T, 4, Vector4<T>>({
+            value, value, value, value
+        })
     { }
 
     /**
@@ -74,8 +68,7 @@ struct Vector4
      * @param w The w-component.
      */
     constexpr Vector4(T x, T y, T z, T w = 1.0f)
-        : x(x), y(y),
-            z(z), w(w)
+        : Vector<T, 4, Vector4<T>>({ x, y, z, w })
     { }
 
     /**
@@ -84,9 +77,27 @@ struct Vector4
      * @param Vec3 The Vector3 to use for the x, y, and z components.
      * @param w The w-component.
      */
-    constexpr Vector4(const Vector3<T>& Vec3, float w = 1.0f)
-        : x(Vec3.x), y(Vec3.y),
-            z(Vec3.z), w(w)
+    constexpr Vector4(const Vector3<T>& v, float w = 1.0f)
+        : Vector<T, 4, Vector4<T>>({ v[0], v[1], v[2], w })
+    { }
+
+    /**
+     * @brief Constructor that converts a `Vector4<U>` to a `Vector4<T>`.
+     *
+     * This constructor creates a `Vector4<T>` by copying the components from a given 
+     * `Vector4<U>`. Each component of the input vector `v` is used to initialize the
+     * corresponding component of the output vector, where `T` and `U` may be different
+     * types. This is useful for converting between different types of vector components 
+     * (e.g., from `Vector4<float>` to `Vector4<double>`).
+     *
+     * @tparam U The type of the components in the input vector `v`.
+     * @tparam T The type of the components in the output vector (the type of the current vector).
+     *
+     * @param v The input `Vector4<U>` to convert to a `Vector4<T>`.
+     */
+    template <typename U>
+    constexpr Vector4(const Vector4<U>& v)
+        : Vector4<T>(v[0], v[1], v[2], v[3])
     { }
 
     /**
@@ -99,314 +110,7 @@ struct Vector4
      */
     template <typename U>
     constexpr operator Vector4<U>() const {
-        return Vector4<U>(
-            static_cast<U>(x),
-            static_cast<U>(y),
-            static_cast<U>(z),
-            static_cast<U>(w));
-    }
-
-    /**
-     * @brief Accesses the component at the specified index.
-     *
-     * @param axis The index of the component to access.
-     * @return T& A reference to the component at the specified index.
-     */
-    constexpr T& operator[](int axis) {
-        return *(reinterpret_cast<T*>(this) + axis);
-    }
-
-    /**
-     * @brief Accesses the component at the specified index.
-     *
-     * @param axis The index of the component to access.
-     * @return const T& A const reference to the component at the specified index.
-     */
-    constexpr const T& operator[](int axis) const {
-        return *(reinterpret_cast<const T*>(this) + axis);
-    }
-
-    /**
-     * @brief Negates each component of the vector.
-     *
-     * @return Vector4 The resulting negated vector.
-     */
-    constexpr Vector4 operator-() {
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] = -(*reinterpret_cast<T>(&result))[i];
-        }
-        return result;
-    }
-
-    /**
-     * @brief Subtracts a scalar value from each component of the vector.
-     *
-     * @param scalar The scalar value to subtract.
-     * @return Vector4 The resulting vector.
-     */
-    constexpr Vector4 operator-(T scalar) const {
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] -= scalar;
-        }
-        return result;
-    }
-
-    /**
-     * @brief Adds a scalar value to each component of the vector.
-     *
-     * @param scalar The scalar value to add.
-     * @return Vector4 The resulting vector.
-     */
-    constexpr Vector4 operator+(T scalar) const {
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] += scalar;
-        }
-        return result;
-    }
-
-    /**
-     * @brief Multiplies each component of the vector by a scalar value.
-     *
-     * @param scalar The scalar value to multiply by.
-     * @return Vector4 The resulting vector.
-     */
-    constexpr Vector4 operator*(T scalar) const {
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] *= scalar;
-        }
-        return result;
-    }
-
-    /**
-     * @brief Scalar division operator.
-     * 
-     * Divides each component of the vector by the given scalar value.
-     * 
-     * @warning If the scalar is zero, the behavior is undefined. This function does not check for division by zero,
-     *          which may result in infinity or NaN for floating-point types.
-     *
-     * @param scalar The scalar value to divide by.
-     * @return Vector4 The result of the division.
-     */
-    constexpr Vector4 operator/(T scalar) const {
-        Vector4 result = *this;
-        if constexpr (std::is_floating_point<T>::value) {
-            const T inv = 1.0 / scalar;
-            for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-                (*reinterpret_cast<T>(&result))[i] *= inv;
-            }
-        } else {
-            for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-                (*reinterpret_cast<T>(&result))[i] /= scalar;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * @brief Vector subtraction operator.
-     *
-     * @param other The vector to subtract.
-     * @return Vector4 The result of the subtraction.
-     */
-    constexpr Vector4 operator-(const Vector4& other) const {
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] -= (*reinterpret_cast<T>(&other))[i];
-        }
-        return result;
-    }
-
-    /**
-     * @brief Vector addition operator.
-     *
-     * @param other The vector to add.
-     * @return Vector4 The result of the addition.
-     */
-    constexpr Vector4 operator+(const Vector4& other) const {
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] += (*reinterpret_cast<T>(&other))[i];
-        }
-        return result;
-    }
-
-    /**
-     * @brief Vector multiplication operator.
-     *
-     * @param other The vector to multiply by.
-     * @return Vector4 The result of the multiplication.
-     */
-    constexpr Vector4 operator*(const Vector4& other) const {
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] *= (*reinterpret_cast<T>(&other))[i];
-        }
-        return result;
-    }
-
-    /**
-     * @brief Vector division operator.
-     * 
-     * Divides each component of the current vector by the corresponding component of the other vector.
-     * 
-     * @warning If any component of the `other` vector is zero, the behavior is undefined. This function does not check for division by zero,
-     *          which may result in infinity or NaN for floating-point types.
-     *
-     * @param other The vector to divide by.
-     * @return Vector4 The result of the division.
-     */
-    constexpr Vector4 operator/(const Vector4& other) const {
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] /= (*reinterpret_cast<T>(&other))[i];
-        }
-        return result;
-    }
-
-    /**
-     * @brief Equality operator.
-     * 
-     * @param other The vector to compare with.
-     * @return bool True if the vectors are equal, false otherwise.
-     */
-    constexpr bool operator==(const Vector4& other) const {
-        return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);
-    }
-
-    /**
-     * @brief Inequality operator.
-     * 
-     * @param other The vector to compare with.
-     * @return bool True if the vectors are not equal, false otherwise.
-     */
-    constexpr bool operator!=(const Vector4& other) const {
-        return (x != other.x) || (y != other.y) || (z != other.z) || (w != other.w);
-    }
-
-    /**
-     * @brief Scalar subtraction and assignment operator.
-     *
-     * @param scalar The scalar value to subtract.
-     * @return Vector4& Reference to the modified vector.
-     */
-    Vector4& operator-=(T scalar) {
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(this))[i] -= scalar;
-        }
-        return *this;
-    }
-
-    /**
-     * @brief Scalar addition and assignment operator.
-     *
-     * @param scalar The scalar value to add.
-     * @return Vector4& Reference to the modified vector.
-     */
-    Vector4& operator+=(T scalar) {
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(this))[i] += scalar;
-        }
-        return *this;
-    }
-
-    /**
-     * @brief Scalar multiplication and assignment operator.
-     *
-     * @param scalar The scalar value to multiply by.
-     * @return Vector4& Reference to the modified vector.
-     */
-    Vector4& operator*=(T scalar) {
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(this))[i] *= scalar;
-        }
-        return *this;
-    }
-
-    /**
-     * @brief Scalar division and assignment operator.
-     * 
-     * Divides each component of the vector by the given scalar value and assigns the result back to the vector.
-     * 
-     * @warning If the scalar is zero, the behavior is undefined. This function does not check for division by zero,
-     *          which may result in infinity or NaN for floating-point types.
-     *
-     * @param scalar The scalar value to divide by.
-     * @return Vector4& Reference to the modified vector.
-     */
-    Vector4& operator/=(T scalar) {
-        if constexpr (std::is_floating_point<T>::value) {
-            const T inv = 1.0 / scalar;
-            for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-                (*reinterpret_cast<T>(this))[i] *= inv;
-            }
-        } else {
-            for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-                (*reinterpret_cast<T>(this))[i] /= scalar;
-            }
-        }
-        return *this;
-    }
-
-    /**
-     * @brief Vector subtraction and assignment operator.
-     *
-     * @param other The vector to subtract.
-     * @return Vector4& Reference to the modified vector.
-     */
-    Vector4& operator-=(const Vector4& other) {
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(this))[i] -= (*reinterpret_cast<T>(&other))[i];
-        }
-        return *this;
-    }
-
-    /**
-     * @brief Vector addition and assignment operator.
-     *
-     * @param other The vector to add.
-     * @return Vector4& Reference to the modified vector.
-     */
-    Vector4& operator+=(const Vector4& other) {
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(this))[i] += (*reinterpret_cast<T>(&other))[i];
-        }
-        return *this;
-    }
-
-    /**
-     * @brief Vector multiplication and assignment operator.
-     *
-     * @param other The vector to multiply by.
-     * @return Vector4& Reference to the modified vector.
-     */
-    Vector4& operator*=(const Vector4& other) {
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(this))[i] *= (*reinterpret_cast<T>(&other))[i];
-        }
-        return *this;
-    }
-
-    /**
-     * @brief Vector division and assignment operator.
-     * 
-     * Divides each component of the current vector by the corresponding component of the other vector and assigns the result back to the current vector.
-     * 
-     * @warning If any component of the `other` vector is zero, the behavior is undefined. This function does not check for division by zero,
-     *          which may result in infinity or NaN for floating-point types.
-     *
-     * @param other The vector to divide by.
-     * @return Vector4& Reference to the modified vector.
-     */
-    Vector4& operator/=(const Vector4& other) {
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(this))[i] /= (*reinterpret_cast<T>(&other))[i];
-        }
-        return *this;
+        return Vector4<U>({ this->v[0], this->v[1], this->v[2], this->v[3] });
     }
 
     /**
@@ -419,233 +123,129 @@ struct Vector4
      * @return A reference to the modified output stream.
      */
     friend std::ostream& operator<<(std::ostream& os, const Vector4& v) {
-        os << "Vec4(" << v.x << ", " << v.y << ", " << v.z << ", " << v.w << ")";
+        os << "Vec4(" << v[0] << ", " << v[1] << ", " << v[2] << ", " << v[3] << ")";
         return os;
     }
 
     /**
-     * @brief Method to check if the vector is equal to (0,0,0,0).
-     *
-     * @return bool True if the vector is equal to (0,0,0,0), false otherwise.
-     */
-    bool is_zero() const {
-        return !(x + y + z + w);
-    }
-
-    /**
-    * @brief Calculate the reciprocal of the vector components.
-    *
-    * @return A new Vector2 object with each component as the reciprocal of the original.
-    */
-    Vector4 rcp() const {
-        static_assert(std::is_floating_point<T>::value, "T must be a floating-point type.");
-        Vector4 result = *this;
-        for (int_fast8_t i = 0; i < DIMENSIONS; i++) {
-            (*reinterpret_cast<T>(&result))[i] =
-                static_cast<T>(1.0) / (*reinterpret_cast<T>(this))[i];
-        }
-        return result;
-    }
-
-    /**
-     * @brief Function to calculate the length (magnitude) of the vector.
-     *
-     * @return T The length of the vector.
-     */
-    T length() const {
-        return std::sqrt(x * x + y * y + z * z + w * w);
-    }
-
-    /**
-     * @brief Function to calculate the length squared of the vector.
-     *
-     * @return T The length squared of the vector.
-     */
-    T length_sq() const {
-        return x * x + y * y + z * z + w * w;
-    }
-
-    /**
-     * @brief Method to calculate the dot product of the vector with another vector.
-     *
-     * @param other The other vector.
-     * @return T The dot product of the two vectors.
-     */
-    T dot(const Vector4& other) const {
-        return x * other.x + y * other.y + z * other.z + w * other.w;
-    }
-
-    /**
-     * @brief Method to normalize the vector.
-     */
-    void normalize() {
-        const T mag = length();
-        if (mag != 0.0) (*this) *= 1.0 / mag;
-    }
-
-    /**
-     * @brief Method to get a normalized vector.
-     *
-     * @return Vector4 The normalized vector.
-     */
-    Vector4 normalized() const {
-        Vector4 result(*this);
-        result.normalize();
-        return result;
-    }
-
-    /**
-     * @brief Method to calculate the distance between two vectors.
-     *
-     * @param other The other vector.
-     * @return T The distance between the two vectors.
-     */
-    T distance(const Vector4& other) const {
-        return (*this - other).length();
-    }
-
-    /**
-     * @brief Function to calculate the squared distance between two vectors.
-     *
-     * @param other The other vector.
-     * @return T The squared distance between the two vectors.
-     */
-    T distance_sq(const Vector4& other) const {
-        const Vector4 diff = *this - other;
-        return diff.x * diff.x + diff.y * diff.y + diff.z * diff.z + diff.w * diff.w;
-    }
-
-    /**
-     * @brief Function to transform the vector by a 4x4 matrix.
-     *
-     * @param matrix The 4x4 matrix.
-     */
-    void transform(const Mat4& matrix); ///< NOTE: Defined in 'mat4.hpp'
-
-    /**
-     * @brief Function to get the vector transformed by a 4x4 matrix.
-     *
-     * @param matrix The 4x4 matrix.
-     * @return Vector4 The transformed vector.
-     */
-    Vector4 transformed(const Mat4& matrix) const; ///< NOTE: Defined in 'mat4.hpp'
-
-    /**
-     * @brief Move this vector towards another vector 'b' by a specified 'delta'.
-     *
-     * This method calculates the new position of the vector by moving towards
-     * the target vector 'b', limited by the distance 'delta' for each component.
-     *
-     * @param b The target vector to move towards.
-     * @param delta The maximum distance to move towards 'b'.
-     * @return A new vector that is moved towards 'b' by 'delta'.
-     */
-    constexpr Vector4 move_towards(Vector4 b, T delta) {
-        T dx = b.x - x;
-        T dy = b.y - y;
-        T dz = b.z - z;
-        T dw = b.w - w;
-
-        return {
-            (std::abs(dx) > delta) ? x + (delta * (dx > T(0) ? T(1) : T(-1))) : b.x,
-            (std::abs(dy) > delta) ? y + (delta * (dy > T(0) ? T(1) : T(-1))) : b.y,
-            (std::abs(dz) > delta) ? z + (delta * (dz > T(0) ? T(1) : T(-1))) : b.z,
-            (std::abs(dw) > delta) ? w + (delta * (dw > T(0) ? T(1) : T(-1))) : b.w
-        };
-    }
-
-    /**
-     * @brief Linearly interpolate between this vector and another vector 'b' based on a parameter 't'.
-     *
-     * This method computes a point along the line connecting this vector and 'b'.
-     * The interpolation parameter 't' should be in the range [0, 1], where
-     * t=0 returns this vector and t=1 returns vector 'b'.
-     *
-     * @param b The target vector to interpolate towards.
-     * @param t The interpolation factor (should be in the range [0, 1]).
-     * @return A new vector that is the result of the linear interpolation.
-     */
-    constexpr Vector4 lerp(Vector4 b, T t) {
-        static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed.");
-        return {
-            x + t * (b.x - x),
-            y + t * (b.y - y),
-            z + t * (b.z - z),
-            w + t * (b.w - w)
-        };
-    }
-
-    /**
-     * @brief Function to clamp the vector components within a specified range.
-     *
-     * @param min The minimum value vector.
-     * @param max The maximum value vector.
-     * @return Vector4 The clamped vector.
-     */
-    Vector4 clamp(const Vector4& min, const Vector4& max) {
-        return {
-            std::clamp(x, min.x, max.x),
-            std::clamp(y, min.y, max.y),
-            std::clamp(z, min.z, max.z),
-            std::clamp(w, min.w, max.w)
-        };
-    }
-
-    /**
-     * @brief Function to clamp the vector components within a specified range.
-     *
-     * @param min The minimum value.
-     * @param max The maximum value.
-     * @return Vector4 The clamped vector.
-     */
-    Vector4 clamp(T min, T max) {
-        return {
-            std::clamp(x, min, max),
-            std::clamp(y, min, max),
-            std::clamp(z, min, max),
-            std::clamp(w, min, max)
-        };
-    }
-
-    /**
-     * @brief Function to get the absolute values of the vector components.
-     *
-     * @return Vector4 The vector with absolute values.
-     */
-    Vector4 abs() {
-        return {
-            std::abs(x),
-            std::abs(y),
-            std::abs(z),
-            std::abs(w)
-        };
-    }
-
-    /**
-     * @brief Returns a pointer to the underlying data of the vector.
+     * @brief Accessor for the x component of the vector.
      * 
-     * This method provides a pointer to the raw data of the vector, allowing direct
-     * access to the components. The returned pointer is of type `T*`, where `T` is the
-     * data type (e.g., `float`, `double`) of the vector's components.
+     * This method returns a reference to the x component of the vector. The x component 
+     * is typically the first element in a 4D vector.
      * 
-     * @return T* Pointer to the underlying data of the vector.
+     * @return T& Reference to the x component.
      */
-    T* ptr() {
-        return reinterpret_cast<T*>(this);
-    }
+    constexpr T& x() { return this->v[0]; }
 
     /**
-     * @brief Returns a constant pointer to the underlying data of the vector.
+     * @brief Accessor for the y component of the vector.
      * 
-     * This method provides a pointer to the raw data of the vector, allowing direct
-     * access to the components in a read-only manner. The returned pointer is of type `const T*`,
-     * where `T` is the data type (e.g., `float`, `double`) of the vector's components.
+     * This method returns a reference to the y component of the vector. The y component 
+     * is typically the second element in a 4D vector.
      * 
-     * @return const T* Constant pointer to the underlying data of the vector.
+     * @return T& Reference to the y component.
      */
-    const T* ptr() const {
-        return reinterpret_cast<const T*>(this);
-    }
+    constexpr T& y() { return this->v[1]; }
+
+    /**
+     * @brief Accessor for the z component of the vector.
+     * 
+     * This method returns a reference to the z component of the vector. The z component 
+     * is typically the third element in a 4D vector.
+     * 
+     * @return T& Reference to the z component.
+     */
+    constexpr T& z() { return this->v[2]; }
+
+    /**
+     * @brief Accessor for the w component of the vector.
+     * 
+     * This method returns a reference to the w component of the vector. The w component 
+     * is typically the fourth element in a 4D vector.
+     * 
+     * @return T& Reference to the w component.
+     */
+    constexpr T& w() { return this->v[3]; }
+
+    /**
+     * @brief Const accessor for the x component of the vector.
+     * 
+     * This method returns a const reference to the x component of the vector. The x component 
+     * is typically the first element in a 4D vector.
+     * 
+     * @return const T& Const reference to the x component.
+     */
+    constexpr const T& x() const { return this->v[0]; }
+
+    /**
+     * @brief Const accessor for the y component of the vector.
+     * 
+     * This method returns a const reference to the y component of the vector. The y component 
+     * is typically the second element in a 4D vector.
+     * 
+     * @return const T& Const reference to the y component.
+     */
+    constexpr const T& y() const { return this->v[1]; }
+
+    /**
+     * @brief Const accessor for the z component of the vector.
+     * 
+     * This method returns a const reference to the z component of the vector. The z component 
+     * is typically the third element in a 4D vector.
+     * 
+     * @return const T& Const reference to the z component.
+     */
+    constexpr const T& z() const { return this->v[2]; }
+
+    /**
+     * @brief Const accessor for the w component of the vector.
+     * 
+     * This method returns a const reference to the w component of the vector. The w component 
+     * is typically the fourth element in a 4D vector.
+     * 
+     * @return const T& Const reference to the w component.
+     */
+    constexpr const T& w() const { return this->v[3]; }
+
+    /**
+     * @brief Mutator for the x component of the vector.
+     * 
+     * This method sets the x component of the vector. The x component is typically the first 
+     * element in a 4D vector.
+     * 
+     * @param value The new value to set for the x component.
+     */
+    constexpr void x(T value) { this->v[0] = value; }
+
+    /**
+     * @brief Mutator for the y component of the vector.
+     * 
+     * This method sets the y component of the vector. The y component is typically the second 
+     * element in a 4D vector.
+     * 
+     * @param value The new value to set for the y component.
+     */
+    constexpr void y(T value) { this->v[1] = value; }
+
+    /**
+     * @brief Mutator for the z component of the vector.
+     * 
+     * This method sets the z component of the vector. The z component is typically the third 
+     * element in a 4D vector.
+     * 
+     * @param value The new value to set for the z component.
+     */
+    constexpr void z(T value) { this->v[2] = value; }
+
+    /**
+     * @brief Mutator for the w component of the vector.
+     * 
+     * This method sets the w component of the vector. The w component is typically the fourth 
+     * element in a 4D vector.
+     * 
+     * @param value The new value to set for the w component.
+     */
+    constexpr void w(T value) { this->v[3] = value; }
 };
 
 } // namespace bpm

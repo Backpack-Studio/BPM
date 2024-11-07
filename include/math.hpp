@@ -20,11 +20,6 @@
 #ifndef BPM_MATH_HPP
 #define BPM_MATH_HPP
 
-#include "./vec2.hpp"
-#include "./vec3.hpp"
-#include "./vec4.hpp"
-#include "./quat.hpp"
-
 #include <type_traits>
 #include <cstdint>
 #include <limits>
@@ -58,7 +53,7 @@ constexpr double GOLDEN_ANGLE = 137.50776405003785508499; ///< The golden angle 
  */
 template <typename T>
 inline constexpr T rad_to_deg(T radians) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return radians * RAD_TO_DEG; // RAD_TO_DEG is assumed to be a constant representing the conversion factor from radians to degrees
 }
 
@@ -73,7 +68,7 @@ inline constexpr T rad_to_deg(T radians) {
  */
 template <typename T>
 inline constexpr T deg_to_rad(T degrees) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return degrees * DEG_TO_RAD; // DEG_TO_RAD is assumed to be a constant representing the conversion factor from degrees to radians
 }
 
@@ -89,7 +84,7 @@ inline constexpr T deg_to_rad(T degrees) {
  */
 template <typename T>
 inline constexpr T fract(T value) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return value - static_cast<int32_t>(value); // Subtracting the integer part to get the fractional part
 }
 
@@ -107,54 +102,6 @@ template <typename T, typename U>
 inline constexpr T sign(U value) {
     static_assert(std::is_signed<T>::value, "Type T must be a signed integer");
     return (static_cast<U>(0) < value) - (value < static_cast<U>(0));
-}
-
-/**
- * @brief Computes the sign of each component of a 2D vector.
- * 
- * This function determines the sign of each component of a 2D vector.
- * It returns a 2D vector where each component indicates the sign of the corresponding component in the input vector.
- * 
- * @tparam T The type of the components in the input vector.
- * @param v The input 2D vector.
- * @return A 2D vector where each component indicates the sign of the corresponding component in the input vector.
- */
-template <typename T, typename U>
-inline constexpr Vector2<T> sign(const Vector2<U>& v) {
-    static_assert(std::is_signed<T>::value, "Type T must be a signed integer");
-    return Vector2<T>(sign(v.x), sign(v.y));
-}
-
-/**
- * @brief Computes the sign of each component of a 3D vector.
- * 
- * This function determines the sign of each component of a 3D vector.
- * It returns a 3D vector where each component indicates the sign of the corresponding component in the input vector.
- * 
- * @tparam T The type of the components in the input vector.
- * @param v The input 3D vector.
- * @return A 3D vector where each component indicates the sign of the corresponding component in the input vector.
- */
-template <typename T, typename U>
-inline constexpr Vector3<T> sign(const Vector3<U>& v) {
-    static_assert(std::is_signed<T>::value, "Type T must be a signed integer");
-    return Vector3<T>(sign(v.x), sign(v.y), sign(v.z));
-}
-
-/**
- * @brief Computes the sign of each component of a 4D vector.
- * 
- * This function determines the sign of each component of a 4D vector.
- * It returns a 4D vector where each component indicates the sign of the corresponding component in the input vector.
- * 
- * @tparam T The type of the components in the input vector.
- * @param v The input 4D vector.
- * @return A 4D vector where each component indicates the sign of the corresponding component in the input vector.
- */
-template <typename T, typename U>
-inline constexpr Vector4<T> sign(const Vector4<U>& v) {
-    static_assert(std::is_signed<T>::value, "Type T must be a signed integer");
-    return Vector4<T>(sign(v.x), sign(v.y), sign(v.z), sign(v.w));
 }
 
 /**
@@ -353,19 +300,47 @@ inline T nearest_po2_log(T value) {
 }
 
 /**
- * @brief Determines whether two floating-point values are approximately equal.
+ * @brief Computes the reciprocal of a scalar value.
  * 
- * This function checks whether two floating-point values are approximately equal within a specified epsilon value.
+ * This function returns the reciprocal (1 / value) of the provided scalar `value`.
+ * It is a constexpr function, meaning the computation is evaluated at compile-time
+ * if the input is known at compile-time.
  * 
- * @tparam T The type of the values.
- * @param a The first floating-point value.
- * @param b The second floating-point value.
- * @param epsilon The maximum allowed difference between a and b to consider them equal (default is std::numeric_limits<T>::epsilon()).
- * @return True if the absolute difference between a and b is less than epsilon, false otherwise.
+ * @tparam T The return type for the reciprocal, typically a floating-point type.
+ * @tparam U The type of the input value, which must be a floating-point type.
+ * 
+ * @param value The scalar value for which the reciprocal is calculated.
+ * @return The reciprocal of `value`, with the result cast to type `T`.
+ * 
+ * @note This function requires that `U` is a floating-point type.
+ */
+template <typename T, typename U>
+constexpr inline T reciprocal(U value) {
+    static_assert(std::is_floating_point<U>::value, "Type U must be a floating-point");
+    return static_cast<T>(1.0) / static_cast<T>(value);
+}
+
+/**
+ * @brief Checks if two floating-point numbers are approximately equal within a tolerance.
+ * 
+ * This function compares two floating-point numbers `a` and `b` to determine if they are 
+ * approximately equal, within a specified tolerance `epsilon`. The comparison considers 
+ * values equal if their absolute difference is less than `epsilon`, which defaults to 
+ * the smallest representable difference for the type `T`.
+ * 
+ * @tparam T The type of the numbers being compared, which must be a floating-point type.
+ * 
+ * @param a The first floating-point number.
+ * @param b The second floating-point number.
+ * @param epsilon The tolerance for comparison, defaulting to `std::numeric_limits<T>::epsilon()`.
+ * 
+ * @return `true` if the absolute difference between `a` and `b` is less than `epsilon`; `false` otherwise.
+ * 
+ * @note This function requires that `T` is a floating-point type.
  */
 template <typename T>
 inline bool approx(T a, T b, T epsilon = std::numeric_limits<T>::epsilon()) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be a floating-point");
     return std::abs(a - b) < epsilon;
 }
 
@@ -389,60 +364,6 @@ inline T move_towards(T a, T b, T delta) {
 }
 
 /**
- * @brief Move a 2D vector 'a' towards another 2D vector 'b' by a specified 'delta'.
- *
- * @tparam T The numeric type of the vector components.
- * @param a The starting vector.
- * @param b The target vector.
- * @param delta The distance to move towards 'b'.
- * @return A new 2D vector moved towards 'b' by 'delta'.
- */
-template <typename T>
-inline Vector2<T> move_towards(Vector2<T> a, Vector2<T> b, T delta) {
-    return Vector2<T> {
-        move_towards(a.x, b.x, delta),
-        move_towards(a.y, b.y, delta)
-    };
-}
-
-/**
- * @brief Move a 3D vector 'a' towards another 3D vector 'b' by a specified 'delta'.
- *
- * @tparam T The numeric type of the vector components.
- * @param a The starting vector.
- * @param b The target vector.
- * @param delta The distance to move towards 'b'.
- * @return A new 3D vector moved towards 'b' by 'delta'.
- */
-template <typename T>
-inline Vector3<T> move_towards(Vector3<T> a, Vector3<T> b, T delta) {
-    return Vector3<T> {
-        move_towards(a.x, b.x, delta),
-        move_towards(a.y, b.y, delta),
-        move_towards(a.z, b.z, delta)
-    };
-}
-
-/**
- * @brief Move a 4D vector 'a' towards another 4D vector 'b' by a specified 'delta'.
- *
- * @tparam T The numeric type of the vector components.
- * @param a The starting vector.
- * @param b The target vector.
- * @param delta The distance to move towards 'b'.
- * @return A new 4D vector moved towards 'b' by 'delta'.
- */
-template <typename T>
-inline Vector4<T> move_towards(Vector4<T> a, Vector4<T> b, T delta) {
-    return Vector4<T> {
-        move_towards(a.x, b.x, delta),
-        move_towards(a.y, b.y, delta),
-        move_towards(a.z, b.z, delta),
-        move_towards(a.w, b.w, delta)
-    };
-}
-
-/**
  * @brief Performs linear interpolation between two values.
  * 
  * This function performs linear interpolation (lerp) between two values.
@@ -456,139 +377,8 @@ inline Vector4<T> move_towards(Vector4<T> a, Vector4<T> b, T delta) {
  */
 template <typename T>
 inline constexpr T lerp(T start, T end, T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return start + t * (end - start);
-}
-
-/**
- * @brief Performs linear interpolation between two 2D vectors.
- * 
- * This function performs linear interpolation (lerp) between two 2D vectors.
- * It returns the vector that is linearly interpolated between a and b based on the interpolation parameter t.
- * 
- * @tparam T The type of the vector components.
- * @param a The starting 2D vector.
- * @param b The ending 2D vector.
- * @param t The interpolation parameter (should be in the range [0, 1]).
- * @return The linearly interpolated 2D vector between a and b based on t.
- */
-template <typename T>
-inline constexpr Vector2<T> lerp(const Vector2<T>& a, const Vector2<T>& b, T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return Vector2<T> {
-        a.x + t * (b.x - a.x),
-        a.y + t * (b.y - a.y)
-    };
-}
-
-/**
- * @brief Performs linear interpolation between two 3D vectors.
- * 
- * This function performs linear interpolation (lerp) between two 3D vectors.
- * It returns the vector that is linearly interpolated between a and b based on the interpolation parameter t.
- * 
- * @tparam T The type of the vector components.
- * @param a The starting 3D vector.
- * @param b The ending 3D vector.
- * @param t The interpolation parameter (should be in the range [0, 1]).
- * @return The linearly interpolated 3D vector between a and b based on t.
- */
-template <typename T>
-inline constexpr Vector3<T> lerp(const Vector3<T>& a, const Vector3<T>& b, T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return Vector3<T> {
-        a.x + t * (b.x - a.x),
-        a.y + t * (b.y - a.y),
-        a.z + t * (b.z - a.z)
-    };
-}
-
-/**
- * @brief Performs linear interpolation between two 4D vectors.
- * 
- * This function performs linear interpolation (lerp) between two 4D vectors.
- * It returns the vector that is linearly interpolated between a and b based on the interpolation parameter t.
- * 
- * @tparam T The type of the vector components.
- * @param a The starting 4D vector.
- * @param b The ending 4D vector.
- * @param t The interpolation parameter (should be in the range [0, 1]).
- * @return The linearly interpolated 4D vector between a and b based on t.
- */
-template <typename T>
-inline constexpr Vector4<T> lerp(const Vector4<T>& a, const Vector4<T>& b, T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return Vector4<T> {
-        a.x + t * (b.x - a.x),
-        a.y + t * (b.y - a.y),
-        a.z + t * (b.z - a.z),
-        a.w + t * (b.w - a.w)
-    };
-}
-
-/**
- * @brief Performs a normalized linear interpolation between two quaternions.
- * 
- * This function performs a normalized linear interpolation (NLerp) between two quaternions.
- * The interpolation parameter `t` is clamped between 0 and 1.
- * 
- * @tparam T The type of the components in the vectors (should be a floating-point type).
- * @param a The start vector.
- * @param b The end vector.
- * @param t The interpolation parameter. It should be in the range [0, 1].
- * @return The result of the NLerp operation, normalized.
- */
-template <typename T>
-inline Quat nlerp(const Quat& a, const Quat& b, T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return lerp(a, b, t).normalized();
-}
-
-/**
- * @brief Performs a spherical linear interpolation between two quaternions.
- * 
- * This function performs a spherical linear interpolation (SLerp) between two quaternions.
- * The interpolation is performed using the provided interpolation amount `amount`.
- * 
- * @tparam T The type of the components in the quaternions (should be a floating-point type).
- * @param q1 The first quaternion.
- * @param q2 The second quaternion.
- * @param amount The interpolation amount. It should be in the range [0, 1].
- * @return The result of the SLerp operation.
- */
-template <typename T>
-inline Quat slerp(const Quat& q1, Quat q2, T amount) {
-    float cos_half_theta = q1.x * q2.x + q1.y * q2.y + q1.z * q2.z + q1.w * q2.w;
-    if (cos_half_theta < 0) {
-        cos_half_theta = -cos_half_theta;
-        q2.x = -q2.x;
-        q2.y = -q2.y;
-        q2.z = -q2.z;
-        q2.w = -q2.w;
-    }
-    if (std::fabs(cos_half_theta) >= 1.0f) {
-        return q1;
-    } else if (cos_half_theta > 0.95f) {
-        return nlerp(q1, q2, amount);
-    }
-    float half_theta = std::acos(cos_half_theta);
-    float sin_half_theta = std::sqrt(1.0f - cos_half_theta*cos_half_theta);
-    if (std::fabs(sin_half_theta) < std::numeric_limits<float>::epsilon()) {
-        return {
-            q1.x * 0.5f + q2.x * 0.5f,
-            q1.y * 0.5f + q2.y * 0.5f,
-            q1.z * 0.5f + q2.z * 0.5f,
-            q1.w * 0.5f + q2.w * 0.5f
-        };
-    }
-    float ratioA = std::sin((1.0f - amount) * half_theta) / sin_half_theta;
-    float ratioB = std::sin(amount * half_theta) / sin_half_theta;
-    return {
-        q1.x * ratioA + q2.x * ratioB,
-        q1.y * ratioA + q2.y * ratioB,
-        q1.z * ratioA + q2.z * ratioB,
-        q1.w * ratioA + q2.w * ratioB
-    };
 }
 
 /**
@@ -614,7 +404,7 @@ inline Quat slerp(const Quat& q1, Quat q2, T amount) {
  */
 template <typename T>
 inline constexpr T smoothstep(T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return t * t * (static_cast<T>(3.0) - static_cast<T>(2.0) * t);
 }
 
@@ -641,7 +431,7 @@ inline constexpr T smoothstep(T t) {
  */
 template <typename T>
 inline constexpr T smootherstep(T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return t * t * t * (t * (t * static_cast<T>(6) - static_cast<T>(15)) + static_cast<T>(10));
 }
 
@@ -658,134 +448,8 @@ inline constexpr T smootherstep(T t) {
  */
 template <typename T>
 inline T normalize(T value, T start, T end) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_arithmetic_v<T>, "T must be a numeric type");
     return (value - start) / (end - start);
-}
-
-/**
- * @brief Normalizes a 2D vector.
- * 
- * This function normalizes the given 2D vector `v`.
- * 
- * @tparam T The type of the vector components (should be a floating-point type).
- * @param v The 2D vector to normalize.
- * @return The normalized 2D vector.
- */
-template <typename T>
-inline Vector2<T> normalize(const Vector2<T>& v) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return v.normalized();
-}
-
-/**
- * @brief Normalizes a 3D vector.
- * 
- * This function normalizes the given 3D vector `v`.
- * 
- * @tparam T The type of the vector components (should be a floating-point type).
- * @param v The 3D vector to normalize.
- * @return The normalized 3D vector.
- */
-template <typename T>
-inline Vector3<T> normalize(const Vector3<T>& v) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return v.normalized();
-}
-
-/**
- * @brief Normalizes a 4D vector.
- * 
- * This function normalizes the given 4D vector `v`.
- * 
- * @tparam T The type of the vector components (should be a floating-point type).
- * @param v The 4D vector to normalize.
- * @return The normalized 4D vector.
- */
-template <typename T>
-inline Vector4<T> normalize(const Vector4<T>& v) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    return v.normalized();
-}
-
-/**
- * @brief Ortho-normalizes two 3D vectors using Gram-Schmidt process.
- * 
- * This function ortho-normalizes two 3D vectors `v1` and `v2` using the Gram-Schmidt process.
- * After ortho-normalization, `v1` remains unchanged, while `v2` becomes orthogonal to `v1`
- * and both `v1` and `v2` are normalized (have a magnitude of 1).
- * 
- * @tparam T The type of the vector components (should be a floating-point type).
- * @param v1 The first 3D vector.
- * @param v2 The second 3D vector to be ortho-normalized. After the operation, it becomes orthogonal to `v1`.
- */
-template <typename T>
-inline void ortho_normalize(Vector3<T>& v1, Vector3<T>& v2) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
-    v1.normalize(); v2 = v1.cross(v2).normalized().cross(v1);
-}
-
-/**
- * @brief Computes the cross product of two 3D vectors.
- * 
- * This function computes the cross product of two 3D vectors `v1` and `v2`.
- * The cross product yields a vector that is perpendicular to both `v1` and `v2`.
- * 
- * @tparam T The type of the vector components (should be a floating-point type).
- * @param v1 The first 3D vector.
- * @param v2 The second 3D vector.
- * @return The cross product vector of `v1` and `v2`.
- */
-template <typename T>
-inline constexpr Vector3<T> cross(const Vector3<T>& v1, const Vector3<T>& v2) {
-    return v1.cross(v2);
-}
-
-/**
- * @brief Computes the dot product of two 2D vectors.
- * 
- * This function computes the dot product of two 2D vectors `v1` and `v2`.
- * The dot product is the sum of the products of the corresponding components of the vectors.
- * 
- * @tparam T The type of the vector components (should be a floating-point type).
- * @param v1 The first 2D vector.
- * @param v2 The second 2D vector.
- * @return The dot product of `v1` and `v2`.
- */
-template <typename T>
-inline constexpr T dot(const Vector2<T>& v1, const Vector2<T>& v2) {
-    return v1.dot(v2);
-}
-
-/**
- * @brief Computes the dot product of two 3D vectors.
- * 
- * This function computes the dot product of two 3D vectors `v1` and `v2`.
- * The dot product is the sum of the products of the corresponding components of the vectors.
- * 
- * @tparam T The type of the vector components (should be a floating-point type).
- * @param v1 The first 3D vector.
- * @param v2 The second 3D vector.
- * @return The dot product of `v1` and `v2`.
- */
-template <typename T>
-inline constexpr T dot(const Vector3<T>& v1, const Vector3<T>& v2) {
-    return v1.dot(v2);
-}
-
-/**
- * @brief Computes the dot product of two 4D vectors.
- * 
- * This function computes the dot product of two 4D vectors `v1` and `v2`.
- * The dot product is the sum of the products of the corresponding components of the vectors.
- * 
- * @tparam T The type of the vector components (should be a floating-point type).
- * @param v1 The first 4D vector.
- * @param v2 The second 4D vector.
- * @return The dot product of `v1` and `v2`.
- */
-template <typename T>
-inline constexpr T dot(const Vector4<T>& v1, const Vector4<T>& v2) {
-    return v1.dot(v2);
 }
 
 /**
@@ -836,7 +500,7 @@ inline T wrap(T value, T min, T max) {
  */
 template <typename T>
 inline T wrap_minus_pi_to_Pi(T th) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return std::atan2(std::sin(th), std::cos(th));
 }
 
@@ -853,7 +517,7 @@ inline T wrap_minus_pi_to_Pi(T th) {
  */
 template <typename T>
 inline T delta_rad(T current, T target) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     const T c0 = std::cos(current), s0 = std::sin(current);
     const T c1 = std::cos(target), s1 = std::sin(target);
     return std::atan2(c0 * s1 - c1 * s0, c0 * c1 + s1 * s0);
@@ -873,7 +537,7 @@ inline T delta_rad(T current, T target) {
  */
 template <typename T>
 inline T lerp_rad(T start, T end, T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     start = wrap_minus_pi_to_Pi(start), end = wrap_minus_pi_to_Pi(end);
     return wrap_minus_pi_to_Pi(start + t * delta_rad(start, end));
 }
@@ -907,7 +571,7 @@ inline T wrap_to_360(T angle) {
  */
 template <typename T>
 inline T delta_deg(T current, T target) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return delta_rad(current * DEG_TO_RAD, target * DEG_TO_RAD) * RAD_TO_DEG;
 }
 
@@ -925,7 +589,7 @@ inline T delta_deg(T current, T target) {
  */
 template <typename T>
 inline T lerp_deg(T start, T end, T t) {
-    static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed");
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return std::fmod(start + t * delta_deg(start, end) + 360.0f, 360.0f);
 }
 

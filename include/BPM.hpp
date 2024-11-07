@@ -3,6 +3,7 @@
 
 #include "./ease.hpp"
 #include "./math.hpp"
+#include "./vecx.hpp"
 #include "./vec2.hpp"
 #include "./vec3.hpp"
 #include "./vec4.hpp"

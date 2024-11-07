@@ -20,9 +20,9 @@
 #ifndef BPM_VEC3_HPP
 #define BPM_VEC3_HPP
 
+#include "./vecx.hpp"
 #include "./vec2.hpp"
 
-#include <algorithm>
 #include <ostream>
 #include <cmath>
 
@@ -48,20 +48,16 @@ using UVec3 = Vector3<uint32_t>;
  * @tparam T The type of the components of the vector.
  */
 template <typename T>
-struct Vector3
+class Vector3 : public Vector<T, 3, Vector3<T>>
 {
-    static_assert(std::is_arithmetic_v<T>, "T must be a numeric type");
-    static constexpr int DIMENSIONS = 3;    ///< The number of dimensions of the vector.
-    typedef T value_type;                   ///< The type of each component of the vector.
-    T x, y, z;                              ///< The x, y, and z components of the vector.
-
+public:
     /**
      * @brief Default constructor.
      *
      * Initializes all components x, y, and z to zero.
      */
     constexpr Vector3()
-        : x(0), y(0), z(0)
+        : Vector<T, 3, Vector3<T>>()
     { }
 
     /**
@@ -72,7 +68,7 @@ struct Vector3
      * @param value The value to set for all components.
      */
     constexpr explicit Vector3(T value)
-        : x(value), y(value), z(value)
+        : Vector<T, 3, Vector3<T>>({ value, value, value })
     { }
 
     /**
@@ -85,7 +81,7 @@ struct Vector3
      * @param z The value to set for the z component.
      */
     constexpr Vector3(T x, T y, T z = 0)
-        : x(x), y(y), z(z)
+        : Vector<T, 3, Vector3<T>>({ x, y, z })
     { }
 
     /**
@@ -94,11 +90,30 @@ struct Vector3
      * Initializes the x and y components of the vector with the x and y values of the given 2D vector,
      * and sets the z component to the specified value (default is 0.0).
      *
-     * @param Vec2 The 2D vector to initialize the x and y components with.
+     * @param vec2 The 2D vector to initialize the x and y components with.
      * @param z The value to set for the z component (default is 0.0).
      */
-    constexpr Vector3(const Vector2<T>& Vec2, T z = 0)
-        : x(Vec2.x), y(Vec2.y), z(z)
+    constexpr Vector3(const Vector2<T>& v, T z = 0)
+        : Vector<T, 3, Vector3<T>>({ v[0], v[1], z })
+    { }
+
+    /**
+     * @brief Constructor that converts a `Vector3<U>` to a `Vector3<T>`.
+     *
+     * This constructor creates a `Vector3<T>` by copying the components from a given 
+     * `Vector3<U>`. Each component of the input vector `v` is used to initialize the
+     * corresponding component of the output vector, where `T` and `U` may be different
+     * types. This is useful for converting between different types of vector components 
+     * (e.g., from `Vector3<float>` to `Vector3<double>`).
+     *
+     * @tparam U The type of the components in the input vector `v`.
+     * @tparam T The type of the components in the output vector (the type of the current vector).
+     *
+     * @param v The input `Vector3<U>` to convert to a `Vector3<T>`.
+     */
+    template <typename U>
+    constexpr Vector3(const Vector3<U>& v)
+        : Vector3<T>(v[0], v[1], v[2])
     { }
 
     /**
@@ -111,281 +126,7 @@ struct Vector3
      */
     template <typename U>
     constexpr operator Vector3<U>() const {
-        return Vector3<U>(
-            static_cast<U>(x),
-            static_cast<U>(y),
-            static_cast<U>(z));
-    }
-
-    /**
-     * @brief Subscript operator to access individual components of the vector.
-     *
-     * @param axis The index of the component to access (0 for x, 1 for y, 2 for z).
-     * @return A reference to the component at the specified index.
-     */
-    constexpr T& operator[](int axis) {
-        switch (axis) {
-            case 0:  return x;
-            case 1:  return y;
-            default: return z;
-        }
-    }
-
-    /**
-     * @brief Subscript operator to access individual components of the vector (const version).
-     *
-     * @param axis The index of the component to access (0 for x, 1 for y, 2 for z).
-     * @return A const reference to the component at the specified index.
-     */
-    constexpr const T& operator[](int axis) const {
-        switch (axis) {
-            case 0:  return x;
-            case 1:  return y;
-            default: return z;
-        }
-    }
-
-    /**
-     * @brief Unary negation operator.
-     *
-     * @return A new vector with each component negated.
-     */
-    constexpr Vector3 operator-() const {
-        return Vector3(-x, -y, -z);
-    }
-
-    /**
-     * @brief Subtraction operator with a scalar value.
-     *
-     * @param scalar The scalar value to subtract from each component of the vector.
-     * @return A new vector resulting from the subtraction operation.
-     */
-    constexpr Vector3 operator-(T scalar) const {
-        return Vector3(x - scalar, y - scalar, z - scalar);
-    }
-
-    /**
-     * @brief Addition operator with a scalar value.
-     *
-     * @param scalar The scalar value to add to each component of the vector.
-     * @return A new vector resulting from the addition operation.
-     */
-    constexpr Vector3 operator+(T scalar) const {
-        return Vector3(x + scalar, y + scalar, z + scalar);
-    }
-
-    /**
-     * @brief Multiplication operator with a scalar value.
-     *
-     * @param scalar The scalar value to multiply each component of the vector by.
-     * @return A new vector resulting from the multiplication operation.
-     */
-    constexpr Vector3 operator*(T scalar) const {
-        return Vector3(x * scalar, y * scalar, z * scalar);
-    }
-
-    /**
-     * @brief Division operator by a scalar value.
-     *
-     * Divides each component of the vector by the given scalar value.
-     *
-     * @warning If the scalar is zero, the behavior is undefined. This function does not check for division by zero.
-     *          For floating-point types, division by zero may result in infinity or NaN.
-     *
-     * @param scalar The scalar value to divide each component of the vector by.
-     * @return A new vector resulting from the division operation.
-     */
-    constexpr Vector3 operator/(T scalar) const {
-        if constexpr (std::is_floating_point<T>::value) {
-            const T inv = static_cast<T>(1.0) / scalar;
-            return Vector3(x * inv, y * inv, z * inv);
-        }
-        return Vector3(x / scalar, y / scalar, z / scalar);
-    }
-
-    /**
-     * @brief Subtraction operator between two vectors.
-     *
-     * @param other The vector to subtract from the current vector.
-     * @return A new vector resulting from the subtraction operation.
-     */
-    constexpr Vector3 operator-(const Vector3& other) const {
-        return Vector3(x - other.x, y - other.y, z - other.z);
-    }
-
-    /**
-     * @brief Addition operator between two vectors.
-     *
-     * @param other The vector to add to the current vector.
-     * @return A new vector resulting from the addition operation.
-     */
-    constexpr Vector3 operator+(const Vector3& other) const {
-        return Vector3(x + other.x, y + other.y, z + other.z);
-    }
-
-    /**
-     * @brief Multiplication operator with another vector.
-     *
-     * @param other The vector to multiply element-wise.
-     * @return A new vector resulting from the element-wise multiplication.
-     */
-    constexpr Vector3 operator*(const Vector3& other) const {
-        return Vector3(x * other.x, y * other.y, z * other.z);
-    }
-
-    /**
-     * @brief Division operator by another vector.
-     *
-     * Divides each component of the current vector by the corresponding component of the other vector.
-     *
-     * @warning If any component of the `other` vector is zero, the behavior is undefined. This function does not check for division by zero,
-     *          which may result in infinity or NaN for floating-point types.
-     *
-     * @param other The vector to divide element-wise.
-     * @return A new vector resulting from the element-wise division.
-     */
-    constexpr Vector3 operator/(const Vector3& other) const {
-        return Vector3(x / other.x, y / other.y, z / other.z);
-    }
-
-    /**
-     * @brief Equality operator.
-     *
-     * @param other The vector to compare with.
-     * @return True if the vectors are equal (all components are equal), false otherwise.
-     */
-    constexpr bool operator==(const Vector3& other) const {
-        return (x == other.x) && (y == other.y) && (z == other.z);
-    }
-
-    /**
-     * @brief Inequality operator.
-     *
-     * @param other The vector to compare with.
-     * @return True if the vectors are not equal (at least one component is different), false otherwise.
-     */
-    constexpr bool operator!=(const Vector3& other) const {
-        return (x != other.x) || (y != other.y) || (z != other.z);
-    }
-
-    /**
-     * @brief Subtraction and assignment operator with a scalar value.
-     *
-     * @param scalar The scalar value to subtract from each component of the vector.
-     * @return A reference to the modified vector.
-     */
-    Vector3& operator-=(T scalar) {
-        x -= scalar;
-        y -= scalar;
-        z -= scalar;
-        return *this;
-    }
-
-    /**
-     * @brief Addition and assignment operator with a scalar value.
-     *
-     * @param scalar The scalar value to add to each component of the vector.
-     * @return A reference to the modified vector.
-     */
-    Vector3& operator+=(T scalar) {
-        x += scalar;
-        y += scalar;
-        z += scalar;
-        return *this;
-    }
-
-    /**
-     * @brief Multiplication and assignment operator with a scalar value.
-     *
-     * @param scalar The scalar value to multiply each component of the vector by.
-     * @return A reference to the modified vector.
-     */
-    Vector3& operator*=(T scalar) {
-        x *= scalar;
-        y *= scalar;
-        z *= scalar;
-        return *this;
-    }
-
-    /**
-     * @brief Division and assignment operator with a scalar value.
-     *
-     * Divides each component of the vector by the given scalar value and assigns the result back to the vector.
-     *
-     * @warning If the scalar is zero, the behavior is undefined. This function does not check for division by zero.
-     *          For floating-point types, division by zero may result in infinity or NaN.
-     *
-     * @param scalar The scalar value to divide each component of the vector by.
-     * @return A reference to the modified vector.
-     */
-    Vector3& operator/=(T scalar) {
-        if constexpr (std::is_floating_point<T>::value) {
-            const T inv = static_cast<T>(1.0) / scalar;
-            x *= inv, y *= inv, z *= inv;
-            return *this;
-        }
-        x /= scalar;
-        y /= scalar;
-        z /= scalar;
-        return *this;
-    }
-
-    /**
-     * @brief Subtraction and assignment operator with another vector.
-     *
-     * @param other The vector to subtract.
-     * @return Reference to the modified vector after subtraction.
-     */
-    Vector3& operator-=(const Vector3& other) {
-        x -= other.x;
-        y -= other.y;
-        z -= other.z;
-        return *this;
-    }
-
-    /**
-     * @brief Addition and assignment operator with another vector.
-     *
-     * @param other The vector to add.
-     * @return Reference to the modified vector after addition.
-     */
-    Vector3& operator+=(const Vector3& other) {
-        x += other.x;
-        y += other.y;
-        z += other.z;
-        return *this;
-    }
-
-    /**
-     * @brief Multiplication and assignment operator with another vector.
-     *
-     * @param other The vector to multiply.
-     * @return Reference to the modified vector after multiplication.
-     */
-    Vector3& operator*=(const Vector3& other) {
-        x *= other.x;
-        y *= other.y;
-        z *= other.z;
-        return *this;
-    }
-
-    /**
-     * @brief Division and assignment operator with another vector.
-     *
-     * Divides each component of the current vector by the corresponding component of the other vector
-     * and assigns the result back to the current vector.
-     *
-     * @warning If any component of the `other` vector is zero, the behavior is undefined. This function does not check for division by zero,
-     *          which may result in infinity or NaN for floating-point types.
-     *
-     * @param other The vector to divide.
-     * @return A reference to the modified vector after division.
-     */
-    Vector3& operator/=(const Vector3& other) {
-        x /= other.x;
-        y /= other.y;
-        z /= other.z;
-        return *this;
+        return Vector<U, 3, Vector3<U>>({ this->v[0], this->v[1], this->v[2] });
     }
 
     /**
@@ -398,460 +139,259 @@ struct Vector3
      * @return A reference to the modified output stream.
      */
     friend std::ostream& operator<<(std::ostream& os, const Vector3& v) {
-        os << "Vec3(" << v.x << ", " << v.y << ", " << v.z << ")";
+        os << "Vec3(" << v[0] << ", " << v[1] << ", " << v[2] << ")";
         return os;
     }
 
     /**
-     * @brief Method to check if the vector is equal to (0,0,0).
-     *
-     * @return True if the vector is equal to (0,0,0), false otherwise.
-     */
-    bool is_zero() const {
-        return !(x + y + z);
-    }
-
-    /**
-    * @brief Calculate the reciprocal of the vector components.
-    *
-    * @return A new Vector2 object with each component as the reciprocal of the original.
-    */
-    Vector3 rcp() const {
-        static_assert(std::is_floating_point<T>::value, "T must be a floating-point type.");
-        return { T(1.0) / x, T(1.0) / y, T(1.0) / z };
-    }
-
-    /**
-     * @brief Function to calculate the length (magnitude) of the vector.
-     *
-     * @return The length (magnitude) of the vector.
-     */
-    T length() const {
-        return std::sqrt(x * x + y * y + z * z);
-    }
-
-    /**
-     * @brief Function to calculate the length squared of the vector.
-     *
-     * @return The length squared of the vector.
-     */
-    T length_sq() const {
-        return x * x + y * y + z * z;
-    }
-
-    /**
-     * @brief Method to calculate the dot product of the vector with another vector.
-     *
-     * @param other The other vector for dot product calculation.
-     * @return The dot product of the two vectors.
-     */
-    T dot(const Vector3& other) const {
-        return x * other.x + y * other.y + z * other.z;
-    }
-
-    /**
-     * @brief Method to normalize the vector.
-     *
-     * If the magnitude of the vector is not zero, this method normalizes the vector.
-     */
-    void normalize() {
-        const T mag = length();
-        if (mag != 0.0) (*this) *= 1.0 / mag;
-    }
-
-    /**
-     * @brief Method to obtain a normalized vector.
-     *
-     * @return A normalized vector.
-     */
-    Vector3 normalized() const {
-        Vector3 result(*this);
-        result.normalize();
-        return result;
-    }
-
-    /**
-     * @brief Makes vectors normalized and orthogonal to each other using Gram-Schmidt process.
-     *
-     * @param tangent A vector orthogonal to this vector after normalization.
-     */
-    void ortho_normalize(Vector3& tangent) {
-        this->normalize();
-        tangent = this->cross(tangent).normalized().cross(*this);
-    }
-
-    /**
-     * @brief Method to calculate the distance between two vectors.
-     *
-     * @param other The other vector to calculate the distance to.
-     * @return The distance between this vector and the other vector.
-     */
-    T distance(const Vector3& other) const {
-        return (*this - other).length();
-    }
-
-    /**
-     * @brief Function to calculate the distance squared between two vectors.
-     *
-     * @param other The other vector to calculate the distance to.
-     * @return The distance squared between this vector and the other vector.
-     */
-    T distance_sq(const Vector3& other) const {
-        const Vector3 diff = *this - other;
-        return diff.x * diff.x + diff.y * diff.y + diff.z * diff.z;
-    }
-
-    /**
-     * @brief Function to calculate the angle between two vectors.
-     *
-     * @param other The other vector.
-     * @return The angle between the two vectors in radians.
-     */
-    T angle(const Vector3& other) {
-        return std::atan2(this->cross(other).length(), this->dot(other));
-    }
-
-    /**
-     * @brief Function to rotate the vector around an axis by a certain angle (Euler-Rodrigues).
-     *
-     * @param axis The axis of rotation.
-     * @param angle The angle of rotation in radians.
-     */
-    void rotate(Vector3 axis, T angle) {
-        axis.normalize();
-        angle *= 0.5f;
-
-        Vector3 w = axis * std::sin(angle);
-        Vector3 wv = w.cross(*this);
-        Vector3 wwv = w.cross(wv);
-
-        wv *= 2 * std::cos(angle);
-        wwv *= 2;
-
-        (*this) += wv + wwv;
-    }
-
-    /**
-    * @brief Function to rotate the vector using Euler angles (yaw, pitch, roll).
-    *
-    * @param euler The Euler angles in radians, where x is pitch, y is yaw, and z is roll.
-    */
-    void rotate(const Vector3& euler) {
-        T pitch = euler.x;
-        T yaw = euler.y;
-        T roll = euler.z;
-
-        T cosYaw = std::cos(yaw);
-        T sinYaw = std::sin(yaw);
-        Vector3<T> yawRot(
-            cosYaw * x + sinYaw * z,
-            y,
-            -sinYaw * x + cosYaw * z
-        );
-
-        T cosPitch = std::cos(pitch);
-        T sinPitch = std::sin(pitch);
-        Vector3<T> pitchRot(
-            yawRot.x,
-            cosPitch * yawRot.y - sinPitch * yawRot.z,
-            sinPitch * yawRot.y + cosPitch * yawRot.z
-        );
-
-        T cosRoll = std::cos(roll);
-        T sinRoll = std::sin(roll);
-        Vector3<T> rollRot(
-            cosRoll * pitchRot.x - sinRoll * pitchRot.y,
-            sinRoll * pitchRot.x + cosRoll * pitchRot.y,
-            pitchRot.z
-        );
-
-        x = rollRot.x;
-        y = rollRot.y;
-        z = rollRot.z;
-    }
-
-    /**
-     * @brief Function to rotate the vector by a quaternion.
-     *
-     * @param q The quaternion representing the rotation.
-     */
-    void rotate(const Quat& q); ///< NOTE: Implemented in 'quat.hpp'
-
-    /**
-     * @brief Function to calculate the rotation of the vector by an axis and an angle.
-     *
-     * @param axis The axis of rotation.
-     * @param angle The angle of rotation in radians.
-     * @return The rotated vector.
-     */
-    Vector3 rotated(const Vector3& axis, T angle) const {
-        Vector3 result(*this);
-        result.rotate(axis, angle);
-        return result;
-    }
-
-    /**
-    * @brief Function to rotate the vector using Euler angles (yaw, pitch, roll).
-    *
-    * @param euler The Euler angles in radians, where x is pitch, y is yaw, and z is roll.
-    * @return The rotated vector.
-    */
-    Vector3 rotated(const Vector3& euler) {
-        Vector3 result(*this);
-        result.rotate(euler);
-        return result;
-    }
-
-    /**
-     * @brief Function to calculate the rotation of the vector by a quaternion.
-     *
-     * @param q The quaternion representing the rotation.
-     * @return The rotated vector.
-     */
-    Vector3 rotated(const Quat& q) {
-        Vector3 result(*this);
-        result.rotate(q);
-        return result;
-    }
-
-    /**
-     * @brief Function to perform a reflection of the vector with respect to another vector.
-     *
-     * @param normal The normal vector (assumed to be a unit vector).
-     * @return The reflected vector.
-     */
-    Vector3 reflect(const Vector3& normal) const {
-        T dot = this->dot(normal);
-        return Vector3(
-            x - 2.0f * this->dot(normal) * normal.x,
-            y - 2.0f * this->dot(normal) * normal.y,
-            z - 2.0f * this->dot(normal) * normal.z);
-    }
-
-    /**
-     * @brief Function to perform a cross product of the vector with another vector.
-     *
-     * @param other The other vector.
-     * @return The cross product vector.
-     */
-    Vector3 cross(const Vector3& other) const {
-        return Vector3(
-            y * other.z - z * other.y,
-            z * other.x - x * other.z,
-            x * other.y - y * other.x
-        );
-    }
-
-    /**
-     * @brief Function to obtain the direction vector from this vector to another vector.
-     *
-     * @param other The target vector.
-     * @return The direction vector from this vector to the target vector.
-     */
-    Vector3 direction(const Vector3& other) const {
-        return (other - *this).normalized();
-    }
-
-    /**
-     * @brief Function to transform the vector by a 3x3 matrix.
-     *
-     * @param matrix The 3x3 transformation matrix.
-     */
-    void transform(const Mat3& matrix) {
-     *this = {
-            x * matrix.m[0] + y * matrix.m[3] + z * matrix.m[6],
-            x * matrix.m[1] + y * matrix.m[4] + z * matrix.m[7],
-            x * matrix.m[2] + y * matrix.m[5] + z * matrix.m[8]
-        };
-    }
-
-    /**
-     * @brief Function to obtain the vector transformed by a 3x3 matrix.
-     *
-     * @param matrix The 3x3 transformation matrix.
-     * @return The transformed vector.
-     */
-    Vector3 transformed(const Mat3& matrix) const {
-        return {
-            x * matrix.m[0] + y * matrix.m[3] + z * matrix.m[6],
-            x * matrix.m[1] + y * matrix.m[4] + z * matrix.m[7],
-            x * matrix.m[2] + y * matrix.m[5] + z * matrix.m[8]
-        };
-    }
-
-    /**
-     * @brief Function to transform the vector by a 4x4 matrix.
-     *
-     * @param matrix The 4x4 transformation matrix.
-     */
-    void transform(const Mat4& matrix); ///< NOTE: Defined in 'mat4.hpp'
-
-    /**
-     * @brief Function to obtain the vector transformed by a 4x4 matrix.
-     *
-     * @param matrix The 4x4 transformation matrix.
-     * @return The transformed vector.
-     */
-    Vector3 transformed(const Mat4& matrix) const;  ///< NOTE: Defined in 'mat4.hpp'
-
-    /**
-     * @brief Calculate a perpendicular vector to the given vector.
-     *
-     * @param other The input vector.
-     * @return A perpendicular vector to the input vector.
-     */
-    static Vector3 perpendicular(const Vector3& other) {
-        Vector3 cardinalAxis = {1.0, 0.0, 0.0};
-        const Vector3 oabs = other.Abs();
-        T min = oabs.x;
-        if (oabs.y < min) {
-            min = oabs.y;
-            cardinalAxis = {0.0, 1.0, 0.0};
-        }
-        if (oabs.z < min) {
-            cardinalAxis = {0.0, 0.0, 1.0};
-        }
-        return other.Cross(cardinalAxis);
-    }
-
-    /**
-     * @brief Move this vector towards another vector 'b' by a specified 'delta'.
-     *
-     * This method calculates the new position of the vector by moving towards
-     * the target vector 'b', limited by the distance 'delta' for each component.
-     *
-     * @param b The target vector to move towards.
-     * @param delta The maximum distance to move towards 'b'.
-     * @return A new vector that is moved towards 'b' by 'delta'.
-     */
-    constexpr Vector3 move_towards(Vector3 b, T delta) {
-        T dx = b.x - x;
-        T dy = b.y - y;
-        T dz = b.z - z;
-        return {
-            (std::abs(dx) > delta) ? x + (delta * (dx > T(0) ? T(1) : T(-1))) : b.x,
-            (std::abs(dy) > delta) ? y + (delta * (dy > T(0) ? T(1) : T(-1))) : b.y,
-            (std::abs(dz) > delta) ? z + (delta * (dz > T(0) ? T(1) : T(-1))) : b.z
-        };
-    }
-
-    /**
-     * @brief Linearly interpolate between this vector and another vector 'b' based on a parameter 't'.
-     *
-     * This method computes a point along the line connecting this vector and 'b'.
-     * The interpolation parameter 't' should be in the range [0, 1], where
-     * t=0 returns this vector and t=1 returns vector 'b'.
-     *
-     * @param b The target vector to interpolate towards.
-     * @param t The interpolation factor (should be in the range [0, 1]).
-     * @return A new vector that is the result of the linear interpolation.
-     */
-    constexpr Vector3 lerp(Vector3 b, T t) {
-        static_assert(std::is_floating_point<T>::value, "Only floating-point types are allowed.");
-        return {
-            x + t * (b.x - x),
-            y + t * (b.y - y),
-            z + t * (b.z - z)
-        };
-    }
-
-    /**
-     * @brief Get the component-wise minimum of this vector and another vector.
-     *
-     * @param other The other vector.
-     * @return A vector containing the component-wise minimum values.
-     */
-    Vector3 min(const Vector3& other) const {
-        return {
-            std::min(x, other.x),
-            std::min(y, other.y),
-            std::min(z, other.z)
-        };
-    }
-
-    /**
-     * @brief Get the component-wise maximum of this vector and another vector.
-     *
-     * @param other The other vector.
-     * @return A vector containing the component-wise maximum values.
-     */
-    Vector3 max(const Vector3& other) const {
-        return {
-            std::max(x, other.x),
-            std::max(y, other.y),
-            std::max(z, other.z)
-        };
-    }
-
-    /**
-     * @brief Clamp each component of this vector between the corresponding components of min and max vectors.
-     *
-     * @param min The vector containing the minimum values.
-     * @param max The vector containing the maximum values.
-     * @return A vector with each component clamped between the corresponding components of min and max.
-     */
-    Vector3 clamp(const Vector3& min, const Vector3& max) const {
-        return {
-            std::clamp(x, min.x, max.x),
-            std::clamp(y, min.y, max.y),
-            std::clamp(z, min.z, max.z)
-        };
-    }
-
-    /**
-     * @brief Clamp each component of this vector between a minimum and maximum value.
-     *
-     * @param min The minimum value.
-     * @param max The maximum value.
-     * @return A vector with each component clamped between the minimum and maximum values.
-     */
-    Vector3 clamp(T min, T max) const {
-        return {
-            std::clamp(x, min, max),
-            std::clamp(y, min, max),
-            std::clamp(z, min, max)
-        };
-    }
-
-    /**
-     * @brief Get the absolute value of each component of this vector.
-     *
-     * @return A vector containing the absolute values of each component.
-     */
-    Vector3 abs() const {
-        return {
-            std::abs(x),
-            std::abs(y),
-            std::abs(z)
-        };
-    }
-
-    /**
-     * @brief Returns a pointer to the underlying data of the vector.
+     * @brief Accessor for the x component of the vector.
      * 
-     * This method provides a pointer to the raw data of the vector, allowing direct
-     * access to the components. The returned pointer is of type `T*`, where `T` is the
-     * data type (e.g., `float`, `double`) of the vector's components.
+     * This method returns a reference to the x component of the vector. The x component 
+     * is typically the first element in a 3D vector.
      * 
-     * @return T* Pointer to the underlying data of the vector.
+     * @return T& Reference to the x component.
      */
-    T* ptr() {
-        return reinterpret_cast<T*>(this);
-    }
+    constexpr T& x() { return this->v[0]; }
 
     /**
-     * @brief Returns a constant pointer to the underlying data of the vector.
+     * @brief Accessor for the y component of the vector.
      * 
-     * This method provides a pointer to the raw data of the vector, allowing direct
-     * access to the components in a read-only manner. The returned pointer is of type `const T*`,
-     * where `T` is the data type (e.g., `float`, `double`) of the vector's components.
+     * This method returns a reference to the y component of the vector. The y component 
+     * is typically the second element in a 3D vector.
      * 
-     * @return const T* Constant pointer to the underlying data of the vector.
+     * @return T& Reference to the y component.
      */
-    const T* ptr() const {
-        return reinterpret_cast<const T*>(this);
-    }
+    constexpr T& y() { return this->v[1]; }
+
+    /**
+     * @brief Accessor for the z component of the vector.
+     * 
+     * This method returns a reference to the z component of the vector. The z component 
+     * is typically the third element in a 3D vector.
+     * 
+     * @return T& Reference to the z component.
+     */
+    constexpr T& z() { return this->v[2]; }
+
+    /**
+     * @brief Const accessor for the x component of the vector.
+     * 
+     * This method returns a const reference to the x component of the vector. The x component 
+     * is typically the first element in a 3D vector.
+     * 
+     * @return const T& Const reference to the x component.
+     */
+    constexpr const T& x() const { return this->v[0]; }
+
+    /**
+     * @brief Const accessor for the y component of the vector.
+     * 
+     * This method returns a const reference to the y component of the vector. The y component 
+     * is typically the second element in a 3D vector.
+     * 
+     * @return const T& Const reference to the y component.
+     */
+    constexpr const T& y() const { return this->v[1]; }
+
+    /**
+     * @brief Const accessor for the z component of the vector.
+     * 
+     * This method returns a const reference to the z component of the vector. The z component 
+     * is typically the third element in a 3D vector.
+     * 
+     * @return const T& Const reference to the z component.
+     */
+    constexpr const T& z() const { return this->v[2]; }
+
+    /**
+     * @brief Mutator for the x component of the vector.
+     * 
+     * This method sets the x component of the vector. The x component is typically the first 
+     * element in a 3D vector.
+     * 
+     * @param value The new value to set for the x component.
+     */
+    constexpr void x(T value) { this->v[0] = value; }
+
+    /**
+     * @brief Mutator for the y component of the vector.
+     * 
+     * This method sets the y component of the vector. The y component is typically the second 
+     * element in a 3D vector.
+     * 
+     * @param value The new value to set for the y component.
+     */
+    constexpr void y(T value) { this->v[1] = value; }
+
+    /**
+     * @brief Mutator for the z component of the vector.
+     * 
+     * This method sets the z component of the vector. The z component is typically the third 
+     * element in a 3D vector.
+     * 
+     * @param value The new value to set for the z component.
+     */
+    constexpr void z(T value) { this->v[2] = value; }
 };
+
+
+/* Vector3 Algorithms Implementation */
+
+/**
+ * @brief Ortho-normalizes two 3D vectors using the Gram-Schmidt process.
+ * 
+ * This function applies the Gram-Schmidt process to ortho-normalize two 3D vectors, `v1` and `v2`.
+ * After this operation, `v1` remains normalized with a magnitude of 1, and `v2` is transformed to 
+ * be orthogonal to `v1` and normalized. This results in an orthonormal basis where both vectors 
+ * are unit length and mutually perpendicular.
+ * 
+ * @tparam T The type of the vector components (typically a floating-point type, e.g., float or double).
+ * 
+ * @param v1 A pointer to the first 3D vector. After the operation, `v1` will be normalized but 
+ *           otherwise unchanged in direction.
+ * 
+ * @param v2 A pointer to the second 3D vector. After the operation, `v2` will be orthogonal 
+ *           to `v1` and normalized, completing an orthonormal basis.
+ * 
+ * @note This function requires that the type `T` is a floating-point type.
+ * 
+ * @details
+ * The process follows these steps:
+ * 1. Normalize `v1`, preserving its direction.
+ * 2. Adjust `v2` to be orthogonal to `v1` by projecting it onto the plane orthogonal to `v1`.
+ * 3. Normalize the adjusted `v2` to ensure it has a unit length.
+ */
+template <typename T>
+inline void ortho_normalize(Vector3<T>* v1, Vector3<T>* v2) {
+    static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
+    normalize(*v1); *v2 = cross(normalized(cross(*v1, *v2)), *v1);
+}
+
+/**
+ * @brief Computes the cross product of two 3D vectors.
+ * 
+ * This function computes the cross product of two 3D vectors `v1` and `v2`.
+ * The cross product yields a vector that is perpendicular to both `v1` and `v2`.
+ * 
+ * @tparam T The type of the vector components (should be a floating-point type).
+ * @param v1 The first 3D vector.
+ * @param v2 The second 3D vector.
+ * @return The cross product vector of `v1` and `v2`.
+ */
+template <typename T>
+inline constexpr Vector3<T> cross(const Vector3<T>& v1, const Vector3<T>& v2) {
+    return Vector3<T> {
+        v1[1] * v2[2] - v1[2] * v2[1],
+        v1[2] * v2[0] - v1[0] * v2[2],
+        v1[0] * v2[1] - v1[1] * v2[0]
+    };
+}
+
+/**
+ * @brief Function to calculate the angle between two vectors.
+ *
+ * @param other The other vector.
+ * @return The angle between the two vectors in radians.
+ */
+template <typename T>
+inline T angle(const Vector3<T>& v1, const Vector3<T>& v2) {
+    return std::atan2(length(cross(v1, v2)), dot(v1, v2));
+}
+
+/**
+ * @brief Function to rotate the vector around an axis by a certain angle (Euler-Rodrigues).
+ *
+ * @param axis The axis of rotation.
+ * @param angle The angle of rotation in radians.
+ */
+template <typename T>
+inline Vector3<T> rotate(const Vector3<T>& v, const Vector3<T>& axis, T angle) {
+
+    angle *= 0.5f;
+
+    Vector3 w = axis * std::sin(angle);
+    Vector3 wv = cross(w, v);
+    Vector3 wwv = cross(w, wv);
+
+    wv *= 2 * std::cos(angle);
+    wwv *= 2;
+
+    return v + wv + wwv;
+}
+
+/**
+ * @brief Function to rotate the vector using Euler angles (yaw, pitch, roll).
+ *
+ * @param euler The Euler angles in radians, where x is pitch, y is yaw, and z is roll.
+ */
+template <typename T>
+inline Vector3<T> rotate(const Vector3<T>& v, const Vector3<T>& euler) {
+    T pitch = euler[0];
+    T yaw = euler[1];
+    T roll = euler[2];
+
+    T cos_yaw = std::cos(yaw);
+    T sin_yaw = std::sin(yaw);
+    Vector3<T> yaw_rot(
+        cos_yaw * v[0] + sin_yaw * v[2],
+        v[1],
+        -sin_yaw * v[0] + cos_yaw * v[2]
+    );
+
+    T cos_pitch = std::cos(pitch);
+    T sin_pitch = std::sin(pitch);
+    Vector3<T> pitch_rot(
+        yaw_rot[0],
+        cos_pitch * yaw_rot[1] - sin_pitch * yaw_rot[2],
+        sin_pitch * yaw_rot[1] + cos_pitch * yaw_rot[2]
+    );
+
+    T cos_roll = std::cos(roll);
+    T sin_roll = std::sin(roll);
+    Vector3<T> roll_rot(
+        cos_roll * pitch_rot[0] - sin_roll * pitch_rot[1],
+        sin_roll * pitch_rot[0] + cos_roll * pitch_rot[1],
+        pitch_rot[2]
+    );
+
+    return roll_rot;
+}
+
+/**
+ * @brief Function to perform a reflection of the vector with respect to another vector.
+ *
+ * @param normal The normal vector (assumed to be a unit vector).
+ * @return The reflected vector.
+ */
+template <typename T>
+inline Vector3<T> reflect(const Vector3<T>& v, const Vector3<T>& normal) {
+    T d = dot(v, normal);
+    return Vector3(
+        v[0] - 2.0f * dot(v, normal) * normal[0],
+        v[1] - 2.0f * dot(v, normal) * normal[1],
+        v[2] - 2.0f * dot(v, normal) * normal[2]);
+}
+
+/**
+ * @brief Calculate a perpendicular vector to the given vector.
+ *
+ * @param other The input vector.
+ * @return A perpendicular vector to the input vector.
+ */
+template <typename T>
+Vector3<T> perpendicular(const Vector3<T>& v) {
+    Vector3<T> cardinal_axis = { 1.0, 0.0, 0.0 };
+    const Vector3 oabs = abs(v);
+    T min = oabs[0];
+    if (oabs[1] < min) {
+        min = oabs[1];
+        cardinal_axis = { 0.0, 1.0, 0.0 };
+    }
+    if (oabs[2] < min) {
+        cardinal_axis = { 0.0, 0.0, 1.0 };
+    }
+    return cross(v, cardinal_axis);
+}
 
 } // namespace bpm
 
