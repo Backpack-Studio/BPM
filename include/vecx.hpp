@@ -69,6 +69,30 @@ public:
     { }
 
     /**
+     * @brief Conversion operator to allow implicit conversion to an `std::array&`.
+     * 
+     * This operator provides access to the underlying array representation of the vector,
+     * enabling seamless interaction with APIs or code that require a reference to an `std::array`.
+     * 
+     * @return std::array& A non-const reference to the underlying array representation.
+     */
+    constexpr operator Array&() noexcept {
+        return v;
+    }
+
+    /**
+     * @brief Conversion operator to allow implicit conversion to a `const std::array&`.
+     * 
+     * This operator provides read-only access to the underlying array representation of the vector,
+     * allowing const-qualified `Vector` objects to be used where a `const std::array&` is expected.
+     * 
+     * @return const std::array& A const reference to the underlying array representation.
+     */
+    constexpr operator const Array&() const noexcept {
+        return v;
+    }
+
+    /**
      * @brief Subscript operator to access the components of the vector.
      *
      * Allows accessing the components of the vector using array-style indexing.
