@@ -82,6 +82,24 @@ public:
     { }
 
     /**
+     * @brief Constructor initializing all four components from a tuple.
+     *
+     * This constructor extracts the four elements from the given tuple
+     * and uses them to initialize the x, y, z, and w components of the vector.
+     *
+     * @param t A tuple containing four elements, where each element is used to 
+     * initialize the respective component (x, y, z, w) of the vector.
+     */
+    constexpr Vector4(const std::tuple<T, T, T, T>& t)
+        : Vector<T, 4, Vector4<T>>({
+            std::get<0>(t),
+            std::get<1>(t),
+            std::get<2>(t),
+            std::get<3>(t)
+        })
+    { }
+
+    /**
      * @brief Constructor that converts a `Vector4<U>` to a `Vector4<T>`.
      *
      * This constructor creates a `Vector4<T>` by copying the components from a given 

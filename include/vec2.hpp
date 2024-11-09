@@ -81,6 +81,22 @@ public:
     { }
 
     /**
+     * @brief Constructor initializing both components from a tuple.
+     *
+     * This constructor extracts the first and second elements from the given tuple
+     * and uses them to initialize the x and y components of the vector, respectively.
+     *
+     * @param t A tuple containing two elements, where the first element is used to 
+     * initialize the x component and the second element to initialize the y component.
+     */
+    constexpr Vector2(const std::tuple<T, T>& t)
+        : Vector<T, 2, Vector2<T>>({
+            std::get<0>(t),
+            std::get<1>(t)
+        })
+    { }
+
+    /**
      * @brief Constructor that converts a `Vector2<U>` to a `Vector2<T>`.
      *
      * This constructor creates a `Vector2<T>` by copying the components from a given 

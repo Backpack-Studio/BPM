@@ -98,6 +98,24 @@ public:
     { }
 
     /**
+     * @brief Constructor initializing all three components from a tuple.
+     *
+     * This constructor extracts the three elements from the given tuple
+     * and uses them to initialize the x, y, and z components of the vector.
+     *
+     * @param t A tuple containing three elements, where the first element is used to 
+     * initialize the x component, the second element to initialize the y component,
+     * and the third element to initialize the z component.
+     */
+    constexpr Vector3(const std::tuple<T, T, T>& t)
+        : Vector<T, 3, Vector2<T>>({
+            std::get<0>(t),
+            std::get<1>(t),
+            std::get<2>(t)
+        })
+    { }
+
+    /**
      * @brief Constructor that converts a `Vector3<U>` to a `Vector3<T>`.
      *
      * This constructor creates a `Vector3<T>` by copying the components from a given 
