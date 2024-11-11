@@ -1,4 +1,4 @@
-#include "../include/BPM.hpp"
+#include "../include/BPM/BPM.hpp"
 
 // NOTE: There is no logic to be found in this example
 //       This example is only to ensure that the calls work
