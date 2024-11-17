@@ -20,7 +20,7 @@
 #ifndef BPM_VECX_HPP
 #define BPM_VECX_HPP
 
-#include "./math.h"
+#include "./math.hpp"
 
 #include <algorithm>
 #include <cstdint>
