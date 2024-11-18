@@ -858,7 +858,7 @@ inline typename Vector<T, N, D>::Type direction(const Vector<T, N, D>& v1, const
  *       To obtain the actual Euclidean distance, you can call the `distance` function.
  */
 template <typename T, uint_fast8_t N, typename D>
-inline typename Vector<T, N, D>::Type distance_sq(const Vector<T, N, D>& v1, const Vector<T, N, D>& v2) {
+inline T distance_sq(const Vector<T, N, D>& v1, const Vector<T, N, D>& v2) {
     static_assert(std::is_floating_point_v<T>, "Type T must be a floating-point");
     return length_sq(v1 - v2);
 }
@@ -887,7 +887,7 @@ inline typename Vector<T, N, D>::Type distance_sq(const Vector<T, N, D>& v1, con
  * @note This function requires that `T` is a floating-point type.
  */
 template <typename T, uint_fast8_t N, typename D>
-inline typename Vector<T, N, D>::Type distance(const Vector<T, N, D>& v1, const Vector<T, N, D>& v2) {
+inline T distance(const Vector<T, N, D>& v1, const Vector<T, N, D>& v2) {
     static_assert(std::is_floating_point_v<T>, "Type T must be a floating-point");
     return length(v1 - v2);
 }
