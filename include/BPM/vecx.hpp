@@ -315,7 +315,7 @@ public:
      * @param scalar The scalar value to subtract from each component.
      * @return A reference to the modified current vector.
      */
-    constexpr Type& operator-=(T scalar) noexcept {
+    constexpr Vector& operator-=(T scalar) noexcept {
         for (uint_fast8_t i = 0; i < N; i++) {
             v[i] -= scalar;
         }
@@ -330,7 +330,7 @@ public:
      * @param scalar The scalar value to add to each component.
      * @return A reference to the modified current vector.
      */
-    constexpr Type& operator+=(T scalar) noexcept {
+    constexpr Vector& operator+=(T scalar) noexcept {
         for (uint_fast8_t i = 0; i < N; i++) {
             v[i] += scalar;
         }
@@ -345,7 +345,7 @@ public:
      * @param scalar The scalar value to multiply each component by.
      * @return A reference to the modified current vector.
      */
-    constexpr Type& operator*=(T scalar) noexcept {
+    constexpr Vector& operator*=(T scalar) noexcept {
         for (uint_fast8_t i = 0; i < N; i++) {
             v[i] *= scalar;
         }
@@ -360,7 +360,7 @@ public:
      * @param scalar The scalar value to divide each component by.
      * @return A reference to the modified current vector.
      */
-    constexpr Type& operator/=(T scalar) noexcept {
+    constexpr Vector& operator/=(T scalar) noexcept {
         if constexpr (std::is_floating_point_v<T>) {
             const T rcp = static_cast<T>(1.0) / scalar;
             for (uint_fast8_t i = 0; i < N; i++) {
@@ -382,7 +382,7 @@ public:
      * @param other The vector to subtract from the current vector.
      * @return A reference to the modified current vector.
      */
-    constexpr Type& operator-=(const Vector& other) noexcept {
+    constexpr Vector& operator-=(const Vector& other) noexcept {
         for (uint_fast8_t i = 0; i < N; i++) {
             v[i] -= other[i];
         }
@@ -397,7 +397,7 @@ public:
      * @param other The vector to add to the current vector.
      * @return A reference to the modified current vector.
      */
-    constexpr Type& operator+=(const Vector& other) noexcept {
+    constexpr Vector& operator+=(const Vector& other) noexcept {
         for (uint_fast8_t i = 0; i < N; i++) {
             v[i] += other[i];
         }
@@ -412,7 +412,7 @@ public:
      * @param other The vector to multiply with the current vector.
      * @return A reference to the modified current vector.
      */
-    constexpr Type& operator*=(const Vector& other) noexcept {
+    constexpr Vector& operator*=(const Vector& other) noexcept {
         for (uint_fast8_t i = 0; i < N; i++) {
             v[i] *= other[i];
         }
@@ -431,7 +431,7 @@ public:
      * @param other The vector by which to divide the current vector.
      * @return A reference to the modified current vector.
      */
-    constexpr Type& operator/=(const Vector& other) noexcept {
+    constexpr Vector& operator/=(const Vector& other) noexcept {
         for (uint_fast8_t i = 0; i < N; i++) {
             v[i] /= other[i];
         }
