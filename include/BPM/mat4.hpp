@@ -143,7 +143,7 @@ public:
      * @return Rotation matrix
      */
     static Mat4 rotate(const Vec3& axis, float angle) {
-        return Mat4::rotate(axis, angle);
+        return Mat4::rotate(axis.x(), axis.y(), axis.z(), angle);
     }
 
     /**
