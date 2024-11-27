@@ -21,6 +21,7 @@
 #define BPM_MAT2_HPP
 
 #include "./vecx.hpp"
+#include <iomanip>
 
 namespace bpm {
 
@@ -70,6 +71,32 @@ public:
             v[0] * other.v[0] + v[1] * other.v[2], v[2] * other.v[0] + v[3] * other.v[2],
             v[0] * other.v[1] + v[1] * other.v[3], v[2] * other.v[1] + v[3] * other.v[3]
         };
+    }
+
+    /**
+     * @brief Overload of the stream insertion operator for a 2x2 matrix (Mat2).
+     * 
+     * This operator formats and prints a 2x2 matrix in a readable way, with each element
+     * enclosed in square brackets and aligned in columns.
+     * 
+     * @param os The output stream to write to.
+     * @param m The Mat2 matrix to print.
+     * @return The output stream (to allow chaining).
+     */
+    friend std::ostream& operator<<(std::ostream& os, const Mat2& m) {
+        os << "Mat2(\n";
+        for (int row = 0; row < 2; ++row) {
+            os << "  ";  // Indentation for clean display
+            for (int col = 0; col < 2; ++col) {
+                os << "[";  // Start of the element
+                os << std::setw(8) << std::setprecision(4) << std::fixed << m.v[col * 2 + row];  // Print element with formatting
+                os << "]";  // End of the element
+                if (col < 1) os << ", ";  // Space between columns
+            }
+            os << '\n';  // New line after each row
+        }
+        os << ")";
+        return os;
     }
 };
 
