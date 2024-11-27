@@ -89,7 +89,7 @@ public:
             os << "  ";  // Indentation for clean display
             for (int col = 0; col < 2; ++col) {
                 os << "[";  // Start of the element
-                os << std::setw(8) << std::setprecision(4) << std::fixed << m.v[col * 2 + row];  // Print element with formatting
+                os << std::setw(10) << std::setprecision(4) << std::fixed << m.v[col * 2 + row];  // Print element with formatting
                 os << "]";  // End of the element
                 if (col < 1) os << ", ";  // Space between columns
             }
