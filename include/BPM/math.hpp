@@ -52,7 +52,7 @@ constexpr double GOLDEN_ANGLE = 137.50776405003785508499; ///< The golden angle 
  * @return The equivalent angle in degrees.
  */
 template <typename T>
-inline constexpr T rad_to_deg(T radians) {
+inline constexpr T degrees(T radians) {
     static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return radians * RAD_TO_DEG; // RAD_TO_DEG is assumed to be a constant representing the conversion factor from radians to degrees
 }
@@ -67,7 +67,7 @@ inline constexpr T rad_to_deg(T radians) {
  * @return The equivalent angle in radians.
  */
 template <typename T>
-inline constexpr T deg_to_rad(T degrees) {
+inline constexpr T radians(T degrees) {
     static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return degrees * DEG_TO_RAD; // DEG_TO_RAD is assumed to be a constant representing the conversion factor from degrees to radians
 }
