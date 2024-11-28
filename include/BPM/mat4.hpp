@@ -496,7 +496,7 @@ public:
  * 
  * @return A `Vec3` containing the translation vector (x, y, z).
  */
-inline constexpr Vec3 get_translation(const Mat4& m) {
+inline constexpr Vec3 translation(const Mat4& m) {
     return { m[12], m[13], m[14] };
 }
 
@@ -517,7 +517,7 @@ inline constexpr Vec3 get_translation(const Mat4& m) {
  * 
  * @note The quaternion is normalized before being returned to ensure it is a unit quaternion.
  */
-inline Quat get_rotation(const Mat4& m) {
+inline Quat rotation(const Mat4& m) {
     // Extract the elements from the matrix
     float trace = m[0] + m[5] + m[10]; // Trace of the matrix
 
