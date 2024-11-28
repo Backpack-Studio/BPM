@@ -449,6 +449,57 @@ inline Vec3 to_euler(const Quat& q) {
 }
 
 /**
+ * @brief Applies a pitch (rotation around the X-axis) to a quaternion.
+ *
+ * This function creates a rotation quaternion representing a pitch rotation 
+ * by the specified angle in radians and multiplies it with the input quaternion `q`.
+ * The resulting quaternion represents the combined rotation.
+ *
+ * @param q The original quaternion to which the pitch will be applied.
+ * @param radians The angle of rotation in radians around the X-axis (pitch).
+ * @return Quat A new quaternion representing the original quaternion `q` with the added pitch rotation.
+ */
+inline Quat pitch(const Quat& q, float radians) {
+    float halfAngle = radians * 0.5f;
+    Quat rotationQuat(std::cos(halfAngle), std::sin(halfAngle), 0, 0);  // Rotation around X-axis
+    return rotationQuat * q;
+}
+
+/**
+ * @brief Applies a yaw (rotation around the Y-axis) to a quaternion.
+ *
+ * This function creates a rotation quaternion representing a yaw rotation 
+ * by the specified angle in radians and multiplies it with the input quaternion `q`.
+ * The resulting quaternion represents the combined rotation.
+ *
+ * @param q The original quaternion to which the yaw will be applied.
+ * @param radians The angle of rotation in radians around the Y-axis (yaw).
+ * @return Quat A new quaternion representing the original quaternion `q` with the added yaw rotation.
+ */
+inline Quat yaw(const Quat& q, float radians) {
+    float halfAngle = radians * 0.5f;
+    Quat rotationQuat(std::cos(halfAngle), 0, std::sin(halfAngle), 0);  // Rotation around Y-axis
+    return rotationQuat * q;
+}
+
+/**
+ * @brief Applies a roll (rotation around the Z-axis) to a quaternion.
+ *
+ * This function creates a rotation quaternion representing a roll rotation 
+ * by the specified angle in radians and multiplies it with the input quaternion `q`.
+ * The resulting quaternion represents the combined rotation.
+ *
+ * @param q The original quaternion to which the roll will be applied.
+ * @param radians The angle of rotation in radians around the Z-axis (roll).
+ * @return Quat A new quaternion representing the original quaternion `q` with the added roll rotation.
+ */
+inline Quat roll(const Quat& q, float radians) {
+    float halfAngle = radians * 0.5f;
+    Quat rotationQuat(std::cos(halfAngle), 0, 0, std::sin(halfAngle));  // Rotation around Z-axis
+    return rotationQuat * q;
+}
+
+/**
  * @brief Rotates a 3D vector by a quaternion.
  * 
  * This function rotates a 3D vector `v` by the quaternion `q`. The rotation is performed using the 
