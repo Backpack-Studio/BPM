@@ -499,7 +499,7 @@ inline T wrap(T value, T min, T max) {
  * @return The wrapped angle within the range [-π, π].
  */
 template <typename T>
-inline T wrap_minus_pi_to_Pi(T th) {
+inline T wrap_rad(T th) {
     static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
     return std::atan2(std::sin(th), std::cos(th));
 }
@@ -538,8 +538,8 @@ inline T delta_rad(T current, T target) {
 template <typename T>
 inline T lerp_rad(T start, T end, T t) {
     static_assert(std::is_floating_point_v<T>, "Type T must be an floating-point");
-    start = wrap_minus_pi_to_Pi(start), end = wrap_minus_pi_to_Pi(end);
-    return wrap_minus_pi_to_Pi(start + t * delta_rad(start, end));
+    start = wrap_rad(start), end = wrap_rad(end);
+    return wrap_rad(start + t * delta_rad(start, end));
 }
 
 /**
@@ -553,7 +553,7 @@ inline T lerp_rad(T start, T end, T t) {
  * @return The wrapped angle within the range [0, 360).
  */
 template <typename T>
-inline T wrap_to_360(T angle) {
+inline T wrap_deg(T angle) {
     return std::fmod(std::abs(angle), static_cast<T>(360.0));
 }
 
