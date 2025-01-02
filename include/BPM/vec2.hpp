@@ -45,7 +45,7 @@ using UVec2 = Vector2<uint32_t>;
  * @tparam T The type of the components of the vector.
  */
 template <typename T>
-class Vector2 : Vector<T, 2, Vector2<T>>
+class Vector2 : public Vector<T, 2, Vector2<T>>
 {
 public:
     /**
