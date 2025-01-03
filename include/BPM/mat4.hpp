@@ -452,6 +452,35 @@ public:
     }
 
     /**
+     * @brief Transformation operator for Vector4
+     * @param vec Vector4 to transform with
+     * @return Result of transformation
+     */
+    template <typename T>
+    constexpr Vector4<T> operator*(const Vector4<T>& vec) const {
+        return Vector4<T> {
+            vec[0] * v[0] + vec[1] * v[4] + vec[2] * v[8] + vec[3] * v[12],
+            vec[0] * v[1] + vec[1] * v[5] + vec[2] * v[9] + vec[3] * v[13],
+            vec[0] * v[2] + vec[1] * v[6] + vec[2] * v[10] + vec[3] * v[14],
+            vec[0] * v[3] + vec[1] * v[7] + vec[2] * v[11] + vec[3] * v[15]
+        };
+    }
+
+    /**
+     * @brief Transformation operator for Vector3
+     * @param vec Vector3 to transform with
+     * @return Result of transformation
+     */
+    template <typename T>
+    constexpr Vector3<T> operator*(const Vector3<T>& vec) const {
+        return Vector3<T> {
+            vec[0] * v[0] + vec[1] * v[4] + vec[2] * v[8] + v[12],
+            vec[0] * v[1] + vec[1] * v[5] + vec[2] * v[9] + v[13],
+            vec[0] * v[2] + vec[1] * v[6] + vec[2] * v[10] + v[14]
+        };
+    }
+
+    /**
      * @brief Overload of the stream insertion operator for a 4x4 matrix (Mat4).
      * 
      * This operator formats and prints a 4x4 matrix in a readable way, with each element
