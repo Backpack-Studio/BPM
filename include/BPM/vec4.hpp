@@ -146,6 +146,30 @@ public:
     }
 
     /**
+     * @brief Converts a 4D vector to a 2D vector by discarding the z and w components.
+     * 
+     * This method returns a `Vector2` containing the x and y components of the original
+     * 4D vector. The z and w components are discarded, which can be useful when working
+     * in 2D contexts where only the x and y components are relevant.
+     * 
+     * @tparam T Type of the vector components.
+     * @return Vector2<T> A new 2D vector containing the x and y components.
+     */
+    constexpr Vector2<T> xy() const { return { this->v[0], this->v[1] }; }
+
+    /**
+     * @brief Converts a 4D vector to a 3D vector by discarding the w component.
+     * 
+     * This method returns a `Vector3` containing the x, y, and z components of the original
+     * 4D vector. The w component is discarded, which is useful when working in 3D contexts 
+     * where only the x, y, and z components are required.
+     * 
+     * @tparam T Type of the vector components.
+     * @return Vector3<T> A new 3D vector containing the x, y, and z components.
+     */
+    constexpr Vector3<T> xyz() const { return { this->v[0], this->v[1], this->v[2] }; }
+
+    /**
      * @brief Accessor for the x component of the vector.
      * 
      * This method returns a reference to the x component of the vector. The x component 
