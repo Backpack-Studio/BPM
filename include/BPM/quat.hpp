@@ -349,7 +349,7 @@ inline constexpr Quat conjugate(const Quat& q) {
  * 
  * Given a quaternion `q = w + xi + yj + zk`, its inverse is given by:
  * 
- *     inverse(q) = conjugate(q) / ||q||^2
+ *     invert(q) = conjugate(q) / ||q||^2
  * 
  * where `conjugate(q)` is the conjugate of `q` and `||q||^2` is the squared norm of `q`. 
  * The squared norm of the quaternion is calculated as `w^2 + x^2 + y^2 + z^2`.
@@ -364,7 +364,7 @@ inline constexpr Quat conjugate(const Quat& q) {
  * @note If the quaternion's norm squared is 0 (i.e., it's a zero quaternion), the function returns a default quaternion, 
  * as the inverse of a zero quaternion is undefined.
  */
-inline constexpr Quat inverse(const Quat& q) {
+inline constexpr Quat invert(const Quat& q) {
     float norm_sq = length_sq(q);
     if (norm_sq > 0.0f) {
         float invNorm = 1.0f / norm_sq;
