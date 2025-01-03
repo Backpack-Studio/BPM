@@ -162,6 +162,18 @@ public:
     }
 
     /**
+     * @brief Converts a 3D vector to a 2D vector by discarding the z component.
+     * 
+     * This method returns a `Vector2` containing the x and y components of the original
+     * 3D vector. The z component is discarded, which can be useful in certain 2D contexts
+     * where only the x and y components are relevant.
+     * 
+     * @tparam T Type of the vector components.
+     * @return Vector2<T> A new 2D vector containing the x and y components.
+     */
+    constexpr Vector2<T> xy() const { return { this->v[0], this->v[1] }; }
+
+    /**
      * @brief Accessor for the x component of the vector.
      * 
      * This method returns a reference to the x component of the vector. The x component 
